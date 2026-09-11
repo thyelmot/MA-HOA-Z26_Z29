@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ứng dụng minh họa các thuật toán mã hóa cổ điển trên Z26 và Z29">
+    <title>Mã hóa cổ điển Z26 &amp; Z29</title>
+
+    <!-- PyScript: cần kết nối Internet khi mở trang lần đầu. -->
+    <link rel="stylesheet" href="https://pyscript.net/releases/2026.6.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2026.6.1/core.js"></script>
+
+    <style>
+        :root {
+            --navy: #10233f;
+            --blue: #1c64f2;
+            --blue-dark: #174fbd;
+            --cyan: #23b7d9;
+            --paper: #ffffff;
+            --surface: #f4f7fb;
+            --line: #d8e1ed;
+            --text: #172033;
+            --muted: #667085;
+            --success: #087a55;
+            --warning: #a15c00;
+            --danger: #b42318;
+            --radius: 18px;
+            --shadow: 0 18px 45px rgba(16, 35, 63, 0.14);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            color: var(--text);
+            font-family: Inter, "Segoe UI", Arial, sans-serif;
+            background:
+                radial-gradient(circle at 8% 8%, rgba(35, 183, 217, 0.16), transparent 26rem),
+                radial-gradient(circle at 92% 90%, rgba(28, 100, 242, 0.14), transparent 28rem),
+                var(--surface);
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        .page-shell {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 42px 0 28px;
+        }
+
+        .hero {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 22px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 10px;
+            color: var(--blue);
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.13em;
+            text-transform: uppercase;
+        }
+
+        .eyebrow::before {
+            width: 28px;
+            height: 3px;
+            border-radius: 999px;
+            background: var(--cyan);
+            content: "";
+        }
+
+        h1 {
+            margin: 0;
+            color: var(--navy);
+            font-size: clamp(2rem, 4vw, 3.4rem);
+            line-height: 1.05;
+            letter-spacing: -0.04em;
+        }
+
+        .subtitle {
+            max-width: 660px;
+            margin: 12px 0 0;
+            color: var(--muted);
+            font-size: 1rem;
+            line-height: 1.65;
+        }
+
+        .student-card {
+            min-width: 250px;
+            padding: 14px 16px;
+            border: 1px solid rgba(28, 100, 242, 0.2);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.72);
+            color: var(--muted);
+            line-height: 1.7;
+            backdrop-filter: blur(8px);
+        }
+
+        .student-card strong {
+            color: var(--navy);
+        }
+
+        .app-card {
+            overflow: hidden;
+            border: 1px solid rgba(216, 225, 237, 0.9);
+            border-radius: var(--radius);
+            background: var(--paper);
+            box-shadow: var(--shadow);
+        }
+
+        .toolbar {
+            display: grid;
+            grid-template-columns: minmax(180px, 0.8fr) minmax(230px, 1fr) minmax(300px, 1.5fr);
+            gap: 18px;
+            padding: 22px;
+            border-bottom: 1px solid var(--line);
+            background: linear-gradient(135deg, #f8fbff, #eef5ff);
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .field label,
+        .field-title {
+            color: var(--navy);
+            font-size: 0.84rem;
+            font-weight: 750;
+        }
+
+        .control {
+            width: 100%;
+            min-height: 45px;
+            padding: 10px 12px;
+            border: 1px solid #c8d4e3;
+            border-radius: 10px;
+            outline: none;
+            background: #fff;
+            color: var(--text);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .control:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 4px rgba(28, 100, 242, 0.12);
+        }
+
+        .key-panel {
+            display: none;
+        }
+
+        .key-panel.active {
+            display: block;
+        }
+
+        .inline-fields,
+        .matrix-grid {
+            display: grid;
+            gap: 9px;
+        }
+
+        .inline-fields {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .matrix-grid {
+            grid-template-columns: repeat(2, minmax(70px, 1fr)) minmax(100px, 1.15fr);
+        }
+
+        .matrix-grid .padding-field {
+            grid-column: 3;
+            grid-row: 1 / span 2;
+        }
+
+        .hint {
+            margin: 7px 0 0;
+            color: var(--muted);
+            font-size: 0.76rem;
+            line-height: 1.45;
+        }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 20px;
+            padding: 24px;
+        }
+
+        .text-panel {
+            min-width: 0;
+        }
+
+        .panel-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .panel-heading h2 {
+            margin: 0;
+            color: var(--navy);
+            font-size: 1.08rem;
+        }
+
+        .panel-tag {
+            padding: 4px 9px;
+            border-radius: 999px;
+            background: #edf4ff;
+            color: var(--blue);
+            font-size: 0.72rem;
+            font-weight: 750;
+        }
+
+        textarea.control {
+            min-height: 310px;
+            resize: vertical;
+            line-height: 1.7;
+        }
+
+        .actions {
+            display: flex;
+            flex-direction: column;
+            align-self: center;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-flex;
+            min-width: 126px;
+            min-height: 45px;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border: 1px solid transparent;
+            border-radius: 11px;
+            cursor: pointer;
+            font-weight: 750;
+            transition: transform 0.15s, background 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            cursor: wait;
+            opacity: 0.58;
+        }
+
+        .btn-primary {
+            background: var(--blue);
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(28, 100, 242, 0.22);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--blue-dark);
+        }
+
+        .btn-secondary {
+            border-color: #b9cae0;
+            background: #fff;
+            color: var(--navy);
+        }
+
+        .btn-ghost {
+            border-color: var(--line);
+            background: #f8fafc;
+            color: var(--muted);
+        }
+
+        .status-area {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            min-height: 58px;
+            padding: 13px 24px;
+            border-top: 1px solid var(--line);
+            background: #fbfcfe;
+        }
+
+        .status-message {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .status-message.success { color: var(--success); }
+        .status-message.warning { color: var(--warning); }
+        .status-message.error { color: var(--danger); }
+
+        .alphabet-preview {
+            max-width: 52%;
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.76rem;
+            text-align: right;
+            word-break: break-word;
+        }
+
+        .notes {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        .note {
+            padding: 16px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.72);
+        }
+
+        .note h3 {
+            margin: 0 0 7px;
+            color: var(--navy);
+            font-size: 0.92rem;
+        }
+
+        .note p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.82rem;
+            line-height: 1.55;
+        }
+
+        footer {
+            padding-top: 22px;
+            color: var(--muted);
+            font-size: 0.76rem;
+            text-align: center;
+        }
+
+        @media (max-width: 900px) {
+            .hero {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .student-card {
+                width: 100%;
+            }
+
+            .toolbar {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .toolbar > :last-child {
+                grid-column: 1 / -1;
+            }
+
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+
+            .actions {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            textarea.control {
+                min-height: 220px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .page-shell {
+                width: min(100% - 20px, 1180px);
+                padding-top: 24px;
+            }
+
+            .toolbar,
+            .workspace {
+                padding: 16px;
+            }
+
+            .toolbar,
+            .inline-fields,
+            .notes {
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar > :last-child {
+                grid-column: auto;
+            }
+
+            .matrix-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .matrix-grid .padding-field {
+                grid-column: 1 / -1;
+                grid-row: auto;
+            }
+
+            .actions .btn {
+                flex: 1 1 135px;
+            }
+
+            .status-area {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .alphabet-preview {
+                max-width: 100%;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="page-shell">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">An toàn và bảo mật thông tin</p>
+                <h1>Mã hóa cổ điển</h1>
+                <p class="subtitle">
+                    Minh họa năm hệ mật cổ điển trên bảng chữ cái tiếng Anh Z26
+                    và bảng chữ cái tiếng Việt Z29.
+                </p>
+            </div>
+
+            <div class="student-card" aria-label="Thông tin sinh viên">
+                <div><strong>Sinh viên:</strong> [Điền họ và tên]</div>
+                <div><strong>MSSV:</strong> [Điền mã sinh viên]</div>
+                <div><strong>Lớp:</strong> [Điền tên lớp]</div>
+            </div>
+        </header>
+
+        <section class="app-card" aria-label="Ứng dụng mã hóa">
+            <div class="toolbar">
+                <div class="field">
+                    <label for="alphabet-select">Hệ chữ</label>
+                    <select id="alphabet-select" class="control">
+                        <option value="Z26">Z26 — Tiếng Anh</option>
+                        <option value="Z29">Z29 — Tiếng Việt</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="cipher-select">Loại mã hóa</label>
+                    <select id="cipher-select" class="control">
+                        <option value="caesar">Dịch vòng (Caesar)</option>
+                        <option value="substitution">Mã thay thế</option>
+                        <option value="vigenere">Mã Vigenère</option>
+                        <option value="affine">Mã Affine</option>
+                        <option value="hill">Mã Hill (ma trận 2 × 2)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <div class="field-title">Khóa mã hóa</div>
+
+                    <div id="key-caesar" class="key-panel active">
+                        <input id="caesar-shift" class="control" type="number" value="3" step="1"
+                               aria-label="Độ dịch" placeholder="Nhập độ dịch k">
+                        <p class="hint">Nhập số nguyên k; khóa sẽ được tính theo modulo của hệ chữ.</p>
+                    </div>
+
+                    <div id="key-substitution" class="key-panel">
+                        <input id="substitution-key" class="control" type="text" autocomplete="off"
+                               aria-label="Bảng chữ cái thay thế" placeholder="Nhập một hoán vị của bảng chữ cái">
+                        <p class="hint">Khóa phải chứa đủ mỗi chữ cái đúng một lần.</p>
+                    </div>
+
+                    <div id="key-vigenere" class="key-panel">
+                        <input id="vigenere-key" class="control" type="text" autocomplete="off"
+                               aria-label="Khóa Vigenère" placeholder="Ví dụ: BAOMAT">
+                        <p class="hint">Khóa gồm các chữ thuộc đúng bảng chữ cái đang chọn.</p>
+                    </div>
+
+                    <div id="key-affine" class="key-panel">
+                        <div class="inline-fields">
+                            <input id="affine-a" class="control" type="number" value="5" step="1"
+                                   aria-label="Khóa a" placeholder="Khóa a">
+                            <input id="affine-b" class="control" type="number" value="8" step="1"
+                                   aria-label="Khóa b" placeholder="Khóa b">
+                        </div>
+                        <p class="hint">Điều kiện: gcd(a, m) = 1, với m là 26 hoặc 29.</p>
+                    </div>
+
+                    <div id="key-hill" class="key-panel">
+                        <div class="matrix-grid" aria-label="Ma trận khóa Hill 2 nhân 2">
+                            <input id="hill-k11" class="control" type="number" value="3" step="1" aria-label="Phần tử k11">
+                            <input id="hill-k12" class="control" type="number" value="3" step="1" aria-label="Phần tử k12">
+                            <input id="hill-k21" class="control" type="number" value="2" step="1" aria-label="Phần tử k21">
+                            <input id="hill-k22" class="control" type="number" value="5" step="1" aria-label="Phần tử k22">
+                            <div class="field padding-field">
+                                <label for="hill-padding">Ký tự đệm</label>
+                                <input id="hill-padding" class="control" type="text" value="X" maxlength="1">
+                            </div>
+                        </div>
+                        <p class="hint">Định thức ma trận phải có nghịch đảo modulo m.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="workspace">
+                <div class="text-panel">
+                    <div class="panel-heading">
+                        <h2>Bản rõ</h2>
+                        <span class="panel-tag">Đầu vào mã hóa</span>
+                    </div>
+                    <label for="plaintext" hidden>Bản rõ</label>
+                    <textarea id="plaintext" class="control" spellcheck="false"
+                              placeholder="Nhập nội dung cần mã hóa..."></textarea>
+                </div>
+
+                <div class="actions" aria-label="Các thao tác">
+                    <button id="encrypt-button" class="btn btn-primary" type="button" disabled>
+                        Mã hóa →
+                    </button>
+                    <button id="decrypt-button" class="btn btn-secondary" type="button" disabled>
+                        ← Giải mã
+                    </button>
+                    <button id="swap-button" class="btn btn-ghost" type="button" disabled>
+                        ⇄ Đổi chỗ
+                    </button>
+                    <button id="clear-button" class="btn btn-ghost" type="button" disabled>
+                        Xóa dữ liệu
+                    </button>
+                </div>
+
+                <div class="text-panel">
+                    <div class="panel-heading">
+                        <h2>Bản mã</h2>
+                        <span class="panel-tag">Đầu vào giải mã</span>
+                    </div>
+                    <label for="ciphertext" hidden>Bản mã</label>
+                    <textarea id="ciphertext" class="control" spellcheck="false"
+                              placeholder="Kết quả mã hóa sẽ xuất hiện tại đây..."></textarea>
+                </div>
+            </div>
+
+            <div class="status-area" aria-live="polite">
+                <p id="status-message" class="status-message">Đang tải môi trường Python...</p>
+                <p id="alphabet-preview" class="alphabet-preview">
+                    Z26: ABCDEFGHIJKLMNOPQRSTUVWXYZ
+                </p>
+            </div>
+        </section>
+
+        <section class="notes" aria-label="Ghi chú sử dụng">
+            <article class="note">
+                <h3>Quy ước Z26</h3>
+                <p>A–Z tương ứng 0–25. Bạn tự quyết định cách xử lý chữ tiếng Việt khi người dùng chọn Z26.</p>
+            </article>
+            <article class="note">
+                <h3>Quy ước Z29</h3>
+                <p>A, Ă, Â, B, C, D, Đ, E, Ê, G, H, I, K, L, M, N, O, Ô, Ơ, P, Q, R, S, T, U, Ư, V, X, Y.</p>
+            </article>
+            <article class="note">
+                <h3>Lưu ý</h3>
+                <p>Đây là các hệ mật phục vụ học tập, không phù hợp để bảo vệ dữ liệu nhạy cảm trong thực tế.</p>
+            </article>
+        </section>
+
+        <footer>
+            Ứng dụng sử dụng PyScript. Cần kết nối Internet để tải môi trường Python từ CDN.
+        </footer>
+    </main>
+
+    <!--
+        PHẦN PYTHON XỬ LÝ THUẬT TOÁN VÀ GIAO DIỆN
+        Các thuật toán hoạt động trên hai bảng chữ cái Z26 và Z29.
+    -->
+    <script type="py">
+from pyscript import when, web
+
+
+# ================================================================
+# 1. HẰNG SỐ VÀ HÀM HỖ TRỢ GIAO DIỆN (ĐÃ CHUẨN BỊ)
+# ================================================================
+
+ALPHABETS = {
+    "Z26": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "Z29": "AĂÂBCDĐEÊGHIKLMNOÔƠPQRSTUƯVXY",
+}
+
+CIPHER_NAMES = {
+    "caesar": "Dịch vòng",
+    "substitution": "Thay thế",
+    "vigenere": "Vigenère",
+    "affine": "Affine",
+    "hill": "Hill",
+}
+
+
+def dom(element_id):
+    """Trả về phần tử DOM gốc theo id."""
+    return web.page[element_id]._dom_element
+
+
+def show_message(message, level=""):
+    """Hiển thị thông báo trạng thái trên giao diện."""
+    status = dom("status-message")
+    status.textContent = message
+    status.className = f"status-message {level}".strip()
+
+
+def get_selected_alphabet():
+    """Lấy chuỗi bảng chữ cái đang được chọn trên giao diện."""
+    return ALPHABETS[dom("alphabet-select").value]
+
+
+def get_key_data(cipher):
+    """Đọc dữ liệu khóa thô từ giao diện; việc kiểm tra khóa do bạn cài đặt."""
+    if cipher == "caesar":
+        return {"shift": dom("caesar-shift").value}
+    if cipher == "substitution":
+        return {"key": dom("substitution-key").value}
+    if cipher == "vigenere":
+        return {"key": dom("vigenere-key").value}
+    if cipher == "affine":
+        return {
+            "a": dom("affine-a").value,
+            "b": dom("affine-b").value,
+        }
+    if cipher == "hill":
+        return {
+            "matrix": [
+                [dom("hill-k11").value, dom("hill-k12").value],
+                [dom("hill-k21").value, dom("hill-k22").value],
+            ],
+            "padding": dom("hill-padding").value,
+        }
+    raise ValueError("Loại mã hóa không hợp lệ.")
+
+
+# ================================================================
+# 2. HÀM TOÁN HỌC
+# ================================================================
+
+def mod(number, modulus):
+    """Trả về number modulo modulus và luôn cho kết quả không âm."""
+    if modulus <= 0:
+        raise ValueError("Modulus phải là số nguyên dương.")
+    return number % modulus
+
+
+def gcd(a, b):
+    """Tính ước chung lớn nhất bằng thuật toán Euclid."""
+    a = abs(int(a))
+    b = abs(int(b))
+    while b != 0:
+        a, b = b, a % b
+    return a
+
+
+def modular_inverse(number, modulus):
+    """Tìm nghịch đảo của number trong modulo modulus."""
+    number = int(number)
+    modulus = int(modulus)
+
+    if modulus <= 1:
+        raise ValueError("Modulus phải lớn hơn 1.")
+
+    # Đưa number về khoảng 0 đến modulus - 1
+    number = mod(number, modulus)
+
+    # Chỉ tồn tại nghịch đảo khi hai số nguyên tố cùng nhau
+    if gcd(number, modulus) != 1:
+        raise ValueError(
+            f"{number} không có nghịch đảo trong modulo {modulus}."
+        )
+
+    # Thử lần lượt các giá trị có thể
+    for inverse in range(1, modulus):
+        if mod(number * inverse, modulus) == 1:
+            return inverse
+
+    # Về lý thuyết sẽ không tới đây nếu gcd bằng 1
+    raise ValueError("Không tìm thấy nghịch đảo modulo.")
+
+
+# ================================================================
+# 3. CHUẨN HÓA VÀ KIỂM TRA DỮ LIỆU
+# ================================================================
+import unicodedata
+
+def normalize_text(text, alphabet):
+    """
+    Chuẩn hóa văn bản:
+    - Chuyển thành chữ hoa.
+    - Z26: đưa chữ tiếng Việt về A-Z.
+    - Z29: bỏ dấu thanh nhưng giữ Ă, Â, Đ, Ê, Ô, Ơ, Ư.
+    - Giữ nguyên khoảng trắng, chữ số và dấu câu.
+    """
+    if text is None:
+        return ""
+
+    # Đưa Unicode về dạng thống nhất rồi chuyển thành chữ hoa
+    text = unicodedata.normalize("NFC", str(text)).upper()
+
+    if alphabet == ALPHABETS["Z26"]:
+        groups = {
+            "A": "ÀÁẢÃẠĂẰẮẲẴẶÂẦẤẨẪẬ",
+            "D": "Đ",
+            "E": "ÈÉẺẼẸÊỀẾỂỄỆ",
+            "I": "ÌÍỈĨỊ",
+            "O": "ÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢ",
+            "U": "ÙÚỦŨỤƯỪỨỬỮỰ",
+            "Y": "ỲÝỶỸỴ",
+        }
+
+    elif alphabet == ALPHABETS["Z29"]:
+        groups = {
+            "A": "ÀÁẢÃẠ",
+            "Ă": "ẰẮẲẴẶ",
+            "Â": "ẦẤẨẪẬ",
+            "E": "ÈÉẺẼẸ",
+            "Ê": "ỀẾỂỄỆ",
+            "I": "ÌÍỈĨỊ",
+            "O": "ÒÓỎÕỌ",
+            "Ô": "ỒỐỔỖỘ",
+            "Ơ": "ỜỚỞỠỢ",
+            "U": "ÙÚỦŨỤ",
+            "Ư": "ỪỨỬỮỰ",
+            "Y": "ỲÝỶỸỴ",
+        }
+
+    else:
+        raise ValueError("Bảng chữ cái không hợp lệ.")
+
+    # Tạo bảng ánh xạ: ký tự có dấu -> ký tự chuẩn
+    conversion_table = {}
+
+    for normalized_character, accented_characters in groups.items():
+        for accented_character in accented_characters:
+            conversion_table[accented_character] = normalized_character
+
+    # Chuẩn hóa từng ký tự
+    result = ""
+
+    for character in text:
+        if character in conversion_table:
+            result += conversion_table[character]
+        else:
+            result += character
+
+    return result
+
+
+def validate_substitution_key(key, alphabet):
+    """Kiểm tra khóa thay thế có phải hoán vị hợp lệ của alphabet hay không."""
+    normalized_key = normalize_text(key, alphabet)
+    normalized_key = "".join(
+        character for character in normalized_key if not character.isspace()
+    )
+
+    if len(normalized_key) != len(alphabet):
+        raise ValueError(
+            f"Khóa thay thế phải có đúng {len(alphabet)} chữ cái."
+        )
+
+    invalid_characters = [
+        character for character in normalized_key if character not in alphabet
+    ]
+    if invalid_characters:
+        raise ValueError(
+            "Khóa thay thế chứa ký tự không thuộc bảng chữ cái: "
+            + ", ".join(sorted(set(invalid_characters)))
+        )
+
+    if len(set(normalized_key)) != len(alphabet):
+        raise ValueError("Mỗi chữ cái trong khóa thay thế chỉ được xuất hiện một lần.")
+
+    if set(normalized_key) != set(alphabet):
+        raise ValueError("Khóa thay thế phải chứa đầy đủ các chữ cái của hệ đã chọn.")
+
+    return normalized_key
+
+
+def validate_vigenere_key(key, alphabet):
+    """Kiểm tra khóa Vigenère và trả về khóa đã chuẩn hóa."""
+    normalized_key = normalize_text(key, alphabet).strip()
+
+    if not normalized_key:
+        raise ValueError("Khóa Vigenère không được để trống.")
+
+    invalid_characters = [
+        character for character in normalized_key if character not in alphabet
+    ]
+    if invalid_characters:
+        raise ValueError("Khóa Vigenère chỉ được chứa chữ cái thuộc hệ đã chọn.")
+
+    return normalized_key
+
+
+def validate_affine_key(a, b, modulus):
+    """Kiểm tra a, b là số nguyên và gcd(a, modulus) bằng 1."""
+    try:
+        a = int(a)
+        b = int(b)
+    except (TypeError, ValueError):
+        raise ValueError("Khóa a và b của Affine phải là số nguyên.")
+
+    a = mod(a, modulus)
+    b = mod(b, modulus)
+
+    if gcd(a, modulus) != 1:
+        raise ValueError(
+            f"Khóa a = {a} không hợp lệ vì gcd({a}, {modulus}) khác 1."
+        )
+
+    return a, b
+
+
+def validate_hill_key(matrix, modulus):
+    """Kiểm tra ma trận 2x2 có khả nghịch trong modulo modulus."""
+    if (
+        not isinstance(matrix, (list, tuple))
+        or len(matrix) != 2
+        or any(not isinstance(row, (list, tuple)) or len(row) != 2 for row in matrix)
+    ):
+        raise ValueError("Khóa Hill phải là ma trận 2x2.")
+
+    try:
+        normalized_matrix = [
+            [mod(int(matrix[row][column]), modulus) for column in range(2)]
+            for row in range(2)
+        ]
+    except (TypeError, ValueError):
+        raise ValueError("Bốn phần tử của ma trận Hill phải là số nguyên.")
+
+    a, b = normalized_matrix[0]
+    c, d = normalized_matrix[1]
+    determinant = mod(a * d - b * c, modulus)
+
+    if gcd(determinant, modulus) != 1:
+        raise ValueError(
+            f"Ma trận Hill không khả nghịch: định thức {determinant} "
+            f"không nguyên tố cùng nhau với {modulus}."
+        )
+
+    return normalized_matrix
+
+
+# ================================================================
+# 4. DỊCH VÒNG (CAESAR)
+# ================================================================
+
+def caesar_encrypt(text, shift, alphabet):
+    """Mã hóa Dịch vòng: E(x) = (x + k) mod m."""
+    try:
+        shift = int(shift)
+    except (TypeError, ValueError):
+        raise ValueError("Độ dịch k phải là một số nguyên.")
+
+    normalized_text = normalize_text(text, alphabet)
+    modulus = len(alphabet)
+    shift = mod(shift, modulus)
+    result = []
+
+    for character in normalized_text:
+        if character in alphabet:
+            old_index = alphabet.index(character)
+            new_index = mod(old_index + shift, modulus)
+            result.append(alphabet[new_index])
+        else:
+            result.append(character)
+
+    return "".join(result)
+
+
+def caesar_decrypt(text, shift, alphabet):
+    """Giải mã Dịch vòng: D(y) = (y - k) mod m."""
+    try:
+        shift = int(shift)
+    except (TypeError, ValueError):
+        raise ValueError("Độ dịch k phải là một số nguyên.")
+
+    return caesar_encrypt(text, -shift, alphabet)
+
+
+# ================================================================
+# 5. MÃ THAY THẾ
+# ================================================================
+
+def substitution_encrypt(text, key, alphabet):
+    """Mã hóa bằng cách ánh xạ alphabet sang bảng chữ cái khóa."""
+    normalized_text = normalize_text(text, alphabet)
+    normalized_key = validate_substitution_key(key, alphabet)
+    encryption_map = dict(zip(alphabet, normalized_key))
+
+    return "".join(
+        encryption_map.get(character, character)
+        for character in normalized_text
+    )
+
+
+def substitution_decrypt(text, key, alphabet):
+    """Giải mã bằng ánh xạ ngược từ bảng chữ cái khóa về alphabet."""
+    normalized_text = normalize_text(text, alphabet)
+    normalized_key = validate_substitution_key(key, alphabet)
+    decryption_map = dict(zip(normalized_key, alphabet))
+
+    return "".join(
+        decryption_map.get(character, character)
+        for character in normalized_text
+    )
+
+
+# ================================================================
+# 6. VIGENÈRE
+# ================================================================
+
+def vigenere_encrypt(text, key, alphabet):
+    """Mã hóa Vigenère: C_i = (P_i + K_i) mod m."""
+    normalized_text = normalize_text(text, alphabet)
+    normalized_key = validate_vigenere_key(key, alphabet)
+    modulus = len(alphabet)
+    result = []
+    key_index = 0
+
+    for character in normalized_text:
+        if character in alphabet:
+            plain_index = alphabet.index(character)
+            current_key = normalized_key[key_index % len(normalized_key)]
+            shift = alphabet.index(current_key)
+            result.append(alphabet[mod(plain_index + shift, modulus)])
+            key_index += 1
+        else:
+            result.append(character)
+
+    return "".join(result)
+
+
+def vigenere_decrypt(text, key, alphabet):
+    """Giải mã Vigenère: P_i = (C_i - K_i) mod m."""
+    normalized_text = normalize_text(text, alphabet)
+    normalized_key = validate_vigenere_key(key, alphabet)
+    modulus = len(alphabet)
+    result = []
+    key_index = 0
+
+    for character in normalized_text:
+        if character in alphabet:
+            cipher_index = alphabet.index(character)
+            current_key = normalized_key[key_index % len(normalized_key)]
+            shift = alphabet.index(current_key)
+            result.append(alphabet[mod(cipher_index - shift, modulus)])
+            key_index += 1
+        else:
+            result.append(character)
+
+    return "".join(result)
+
+
+# ================================================================
+# 7. AFFINE
+# ================================================================
+
+def affine_encrypt(text, a, b, alphabet):
+    """Mã hóa Affine: E(x) = (a*x + b) mod m."""
+    normalized_text = normalize_text(text, alphabet)
+    modulus = len(alphabet)
+    a, b = validate_affine_key(a, b, modulus)
+    result = []
+
+    for character in normalized_text:
+        if character in alphabet:
+            plain_index = alphabet.index(character)
+            cipher_index = mod(a * plain_index + b, modulus)
+            result.append(alphabet[cipher_index])
+        else:
+            result.append(character)
+
+    return "".join(result)
+
+
+def affine_decrypt(text, a, b, alphabet):
+    """Giải mã Affine: D(y) = a^(-1)*(y - b) mod m."""
+    normalized_text = normalize_text(text, alphabet)
+    modulus = len(alphabet)
+    a, b = validate_affine_key(a, b, modulus)
+    inverse_a = modular_inverse(a, modulus)
+    result = []
+
+    for character in normalized_text:
+        if character in alphabet:
+            cipher_index = alphabet.index(character)
+            plain_index = mod(inverse_a * (cipher_index - b), modulus)
+            result.append(alphabet[plain_index])
+        else:
+            result.append(character)
+
+    return "".join(result)
+
+
+# ================================================================
+# 8. HILL 2x2
+# ================================================================
+
+def inverse_matrix_2x2(matrix, modulus):
+    """Tính ma trận nghịch đảo 2x2 trong modulo modulus."""
+    matrix = validate_hill_key(matrix, modulus)
+    a, b = matrix[0]
+    c, d = matrix[1]
+
+    determinant = mod(a * d - b * c, modulus)
+    inverse_determinant = modular_inverse(determinant, modulus)
+
+    return [
+        [
+            mod(inverse_determinant * d, modulus),
+            mod(inverse_determinant * -b, modulus),
+        ],
+        [
+            mod(inverse_determinant * -c, modulus),
+            mod(inverse_determinant * a, modulus),
+        ],
+    ]
+
+
+def multiply_matrix_vector(matrix, vector, modulus):
+    """Nhân ma trận 2x2 với vector hai phần tử trong modulo modulus."""
+    if (
+        not isinstance(matrix, (list, tuple))
+        or len(matrix) != 2
+        or any(not isinstance(row, (list, tuple)) or len(row) != 2 for row in matrix)
+    ):
+        raise ValueError("Ma trận phải có kích thước 2x2.")
+
+    if not isinstance(vector, (list, tuple)) or len(vector) != 2:
+        raise ValueError("Vector phải có đúng hai phần tử.")
+
+    try:
+        a, b = int(matrix[0][0]), int(matrix[0][1])
+        c, d = int(matrix[1][0]), int(matrix[1][1])
+        x, y = int(vector[0]), int(vector[1])
+    except (TypeError, ValueError):
+        raise ValueError("Ma trận và vector chỉ được chứa các số nguyên.")
+
+    return [
+        mod(a * x + b * y, modulus),
+        mod(c * x + d * y, modulus),
+    ]
+
+
+def replace_alphabet_letters(text, replacement_letters, alphabet):
+    """
+    Thay lần lượt các chữ thuộc alphabet trong text bằng replacement_letters.
+    Ký tự ngoài alphabet được giữ nguyên; chữ đệm còn dư được nối vào cuối.
+    """
+    result = []
+    replacement_index = 0
+
+    for character in text:
+        if character in alphabet:
+            if replacement_index >= len(replacement_letters):
+                raise ValueError("Không đủ chữ kết quả để ghép lại văn bản.")
+            result.append(replacement_letters[replacement_index])
+            replacement_index += 1
+        else:
+            result.append(character)
+
+    if replacement_index < len(replacement_letters):
+        result.extend(replacement_letters[replacement_index:])
+
+    return "".join(result)
+
+
+def hill_encrypt(text, matrix, padding, alphabet):
+    """Mã hóa Hill theo từng khối hai chữ cái."""
+    modulus = len(alphabet)
+    matrix = validate_hill_key(matrix, modulus)
+    normalized_text = normalize_text(text, alphabet)
+    normalized_padding = normalize_text(padding, alphabet)
+
+    if len(normalized_padding) != 1 or normalized_padding not in alphabet:
+        raise ValueError("Ký tự đệm Hill phải là đúng một chữ thuộc hệ đã chọn.")
+
+    source_letters = [
+        character for character in normalized_text if character in alphabet
+    ]
+    if len(source_letters) % 2 != 0:
+        source_letters.append(normalized_padding)
+
+    encrypted_letters = []
+    for index in range(0, len(source_letters), 2):
+        vector = [
+            alphabet.index(source_letters[index]),
+            alphabet.index(source_letters[index + 1]),
+        ]
+        encrypted_vector = multiply_matrix_vector(matrix, vector, modulus)
+        encrypted_letters.extend(alphabet[value] for value in encrypted_vector)
+
+    return replace_alphabet_letters(normalized_text, encrypted_letters, alphabet)
+
+
+def hill_decrypt(text, matrix, padding, alphabet):
+    """Giải mã Hill bằng ma trận khóa nghịch đảo."""
+    modulus = len(alphabet)
+    matrix = validate_hill_key(matrix, modulus)
+    normalized_text = normalize_text(text, alphabet)
+    normalized_padding = normalize_text(padding, alphabet)
+
+    if len(normalized_padding) != 1 or normalized_padding not in alphabet:
+        raise ValueError("Ký tự đệm Hill phải là đúng một chữ thuộc hệ đã chọn.")
+
+    source_letters = [
+        character for character in normalized_text if character in alphabet
+    ]
+    if len(source_letters) % 2 != 0:
+        raise ValueError("Bản mã Hill phải có số lượng chữ cái là số chẵn.")
+
+    inverse_matrix = inverse_matrix_2x2(matrix, modulus)
+    decrypted_letters = []
+
+    for index in range(0, len(source_letters), 2):
+        vector = [
+            alphabet.index(source_letters[index]),
+            alphabet.index(source_letters[index + 1]),
+        ]
+        decrypted_vector = multiply_matrix_vector(inverse_matrix, vector, modulus)
+        decrypted_letters.extend(alphabet[value] for value in decrypted_vector)
+
+    # Không tự xóa ký tự đệm vì không thể biết đó là đệm hay chữ thật của bản rõ.
+    return replace_alphabet_letters(normalized_text, decrypted_letters, alphabet)
+
+
+# ================================================================
+# 9. BỘ ĐIỀU PHỐI THUẬT TOÁN (ĐÃ NỐI VỚI GIAO DIỆN)
+# ================================================================
+
+def encrypt_text(text, cipher, alphabet, key_data):
+    """Chuyển yêu cầu mã hóa tới đúng hàm thuật toán."""
+    if cipher == "caesar":
+        return caesar_encrypt(text, key_data["shift"], alphabet)
+    if cipher == "substitution":
+        return substitution_encrypt(text, key_data["key"], alphabet)
+    if cipher == "vigenere":
+        return vigenere_encrypt(text, key_data["key"], alphabet)
+    if cipher == "affine":
+        return affine_encrypt(text, key_data["a"], key_data["b"], alphabet)
+    if cipher == "hill":
+        return hill_encrypt(text, key_data["matrix"], key_data["padding"], alphabet)
+    raise ValueError("Loại mã hóa không hợp lệ.")
+
+
+def decrypt_text(text, cipher, alphabet, key_data):
+    """Chuyển yêu cầu giải mã tới đúng hàm thuật toán."""
+    if cipher == "caesar":
+        return caesar_decrypt(text, key_data["shift"], alphabet)
+    if cipher == "substitution":
+        return substitution_decrypt(text, key_data["key"], alphabet)
+    if cipher == "vigenere":
+        return vigenere_decrypt(text, key_data["key"], alphabet)
+    if cipher == "affine":
+        return affine_decrypt(text, key_data["a"], key_data["b"], alphabet)
+    if cipher == "hill":
+        return hill_decrypt(text, key_data["matrix"], key_data["padding"], alphabet)
+    raise ValueError("Loại mã hóa không hợp lệ.")
+
+
+# ================================================================
+# 10. SỰ KIỆN GIAO DIỆN (ĐÃ CHUẨN BỊ)
+# ================================================================
+
+def update_key_panel():
+    """Ẩn/hiện đúng khu vực nhập khóa theo thuật toán được chọn."""
+    selected = dom("cipher-select").value
+    for cipher in CIPHER_NAMES:
+        panel = dom(f"key-{cipher}")
+        panel.classList.toggle("active", cipher == selected)
+
+
+def update_alphabet_preview():
+    """Cập nhật dòng xem trước bảng chữ cái."""
+    system = dom("alphabet-select").value
+    alphabet = ALPHABETS[system]
+    separator = " " if system == "Z29" else ""
+    dom("alphabet-preview").textContent = f"{system}: {separator.join(alphabet)}"
+
+
+@when("change", "#cipher-select")
+def handle_cipher_change(event):
+    update_key_panel()
+    name = CIPHER_NAMES[dom("cipher-select").value]
+    show_message(f"Đã chọn thuật toán {name}.")
+
+
+@when("change", "#alphabet-select")
+def handle_alphabet_change(event):
+    update_alphabet_preview()
+    system = dom("alphabet-select").value
+    show_message(f"Đã chuyển sang hệ chữ {system}.")
+
+
+@when("click", "#encrypt-button")
+def handle_encrypt(event):
+    plaintext = dom("plaintext").value
+    if not plaintext.strip():
+        show_message("Hãy nhập bản rõ trước khi mã hóa.", "warning")
+        return
+
+    cipher = dom("cipher-select").value
+    alphabet = get_selected_alphabet()
+    key_data = get_key_data(cipher)
+
+    try:
+        result = encrypt_text(plaintext, cipher, alphabet, key_data)
+        dom("ciphertext").value = result
+        show_message("Mã hóa thành công.", "success")
+    except NotImplementedError as error:
+        show_message(str(error), "warning")
+    except (ValueError, TypeError) as error:
+        show_message(str(error), "error")
+    except Exception as error:
+        show_message(f"Lỗi chưa xử lý: {error}", "error")
+
+
+@when("click", "#decrypt-button")
+def handle_decrypt(event):
+    ciphertext = dom("ciphertext").value
+    if not ciphertext.strip():
+        show_message("Hãy nhập bản mã trước khi giải mã.", "warning")
+        return
+
+    cipher = dom("cipher-select").value
+    alphabet = get_selected_alphabet()
+    key_data = get_key_data(cipher)
+
+    try:
+        result = decrypt_text(ciphertext, cipher, alphabet, key_data)
+        dom("plaintext").value = result
+        show_message("Giải mã thành công.", "success")
+    except NotImplementedError as error:
+        show_message(str(error), "warning")
+    except (ValueError, TypeError) as error:
+        show_message(str(error), "error")
+    except Exception as error:
+        show_message(f"Lỗi chưa xử lý: {error}", "error")
+
+
+@when("click", "#swap-button")
+def handle_swap(event):
+    plaintext = dom("plaintext").value
+    dom("plaintext").value = dom("ciphertext").value
+    dom("ciphertext").value = plaintext
+    show_message("Đã đổi chỗ bản rõ và bản mã.")
+
+
+@when("click", "#clear-button")
+def handle_clear(event):
+    dom("plaintext").value = ""
+    dom("ciphertext").value = ""
+    show_message("Đã xóa dữ liệu.")
+
+
+# Khởi tạo trạng thái giao diện sau khi PyScript đã chạy.
+update_key_panel()
+update_alphabet_preview()
+for button_id in ("encrypt-button", "decrypt-button", "swap-button", "clear-button"):
+    dom(button_id).disabled = False
+show_message("PyScript đã sẵn sàng. Bạn có thể bắt đầu mã hóa hoặc giải mã.", "success")
+    </script>
+</body>
+</html>
