@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Ứng dụng minh họa các thuật toán mã hóa cổ điển trên Z26 và Z29">
-    <title>Mã hóa cổ điển Z26 &amp; Z29</title>
+    <meta name="description" content="Ứng dụng minh họa mã hóa cổ điển Z26/Z29 và mã hóa khối DES">
+    <title>Mã hóa cổ điển &amp; DES</title>
 
     <!-- PyScript: cần kết nối Internet khi mở trang lần đầu. -->
     <link rel="stylesheet" href="https://pyscript.net/releases/2026.6.1/core.css">
@@ -321,7 +321,7 @@
 
         .notes {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 14px;
             margin-top: 18px;
         }
@@ -344,6 +344,34 @@
             color: var(--muted);
             font-size: 0.82rem;
             line-height: 1.55;
+        }
+
+        .hex-input {
+            font-family: "Cascadia Mono", Consolas, "Courier New", monospace;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .example-link {
+            display: inline-flex;
+            margin-top: 8px;
+            padding: 0;
+            border: 0;
+            background: none;
+            color: var(--blue);
+            cursor: pointer;
+            font-size: 0.76rem;
+            font-weight: 750;
+        }
+
+        .example-link:hover {
+            text-decoration: underline;
+        }
+
+        select.control:disabled {
+            cursor: not-allowed;
+            background: #f3f6fa;
+            color: var(--muted);
         }
 
         footer {
@@ -373,6 +401,10 @@
 
             .workspace {
                 grid-template-columns: 1fr;
+            }
+
+            .notes {
+                grid-template-columns: 1fr 1fr;
             }
 
             .actions {
@@ -438,17 +470,18 @@
         <header class="hero">
             <div>
                 <p class="eyebrow">An toàn và bảo mật thông tin</p>
-                <h1>Mã hóa cổ điển</h1>
+                <h1>Mã hóa cổ điển &amp; DES</h1>
                 <p class="subtitle">
                     Minh họa năm hệ mật cổ điển trên bảng chữ cái tiếng Anh Z26
-                    và bảng chữ cái tiếng Việt Z29.
+                    và bảng chữ cái tiếng Việt Z29, đồng thời mã hóa một khối
+                    dữ liệu 64 bit bằng thuật toán DES.
                 </p>
             </div>
 
             <div class="student-card" aria-label="Thông tin sinh viên">
-                <div><strong>Sinh viên:</strong> [Điền họ và tên]</div>
-                <div><strong>MSSV:</strong> [Điền mã sinh viên]</div>
-                <div><strong>Lớp:</strong> [Điền tên lớp]</div>
+                <div><strong>Sinh viên:</strong> Ngô Quang Thiện</div>
+                <div><strong>MSSV:</strong> 24102651</div>
+                <div><strong>Lớp:</strong> N06</div>
             </div>
         </header>
 
@@ -470,6 +503,7 @@
                         <option value="vigenere">Mã Vigenère</option>
                         <option value="affine">Mã Affine</option>
                         <option value="hill">Mã Hill (ma trận 2 × 2)</option>
+                        <option value="des">DES (khối 64 bit)</option>
                     </select>
                 </div>
 
@@ -517,6 +551,16 @@
                         </div>
                         <p class="hint">Định thức ma trận phải có nghịch đảo modulo m.</p>
                     </div>
+
+                    <div id="key-des" class="key-panel">
+                        <input id="des-key" class="control hex-input" type="text" autocomplete="off"
+                               maxlength="18" value="AABB09182736CCDD"
+                               aria-label="Khóa DES hexadecimal" placeholder="AABB09182736CCDD">
+                        <p class="hint">Khóa 64 bit dạng hexadecimal, đúng 16 ký tự hexa.</p>
+                        <button id="des-fill-example" class="example-link" type="button">
+                            Điền ví dụ đề bài
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -524,7 +568,7 @@
                 <div class="text-panel">
                     <div class="panel-heading">
                         <h2>Bản rõ</h2>
-                        <span class="panel-tag">Đầu vào mã hóa</span>
+                        <span id="plaintext-tag" class="panel-tag">Đầu vào mã hóa</span>
                     </div>
                     <label for="plaintext" hidden>Bản rõ</label>
                     <textarea id="plaintext" class="control" spellcheck="false"
@@ -549,7 +593,7 @@
                 <div class="text-panel">
                     <div class="panel-heading">
                         <h2>Bản mã</h2>
-                        <span class="panel-tag">Đầu vào giải mã</span>
+                        <span id="ciphertext-tag" class="panel-tag">Đầu vào giải mã</span>
                     </div>
                     <label for="ciphertext" hidden>Bản mã</label>
                     <textarea id="ciphertext" class="control" spellcheck="false"
@@ -575,6 +619,10 @@
                 <p>A, Ă, Â, B, C, D, Đ, E, Ê, G, H, I, K, L, M, N, O, Ô, Ơ, P, Q, R, S, T, U, Ư, V, X, Y.</p>
             </article>
             <article class="note">
+                <h3>DES — khối 64 bit</h3>
+                <p>Bản rõ và khóa nhập dạng hexadecimal, mỗi giá trị 16 ký tự (64 bit). Ví dụ đề bài cho bản mã <strong>C0B7A8D05F3A829C</strong>.</p>
+            </article>
+            <article class="note">
                 <h3>Lưu ý</h3>
                 <p>Đây là các hệ mật phục vụ học tập, không phù hợp để bảo vệ dữ liệu nhạy cảm trong thực tế.</p>
             </article>
@@ -587,7 +635,7 @@
 
     <!--
         PHẦN PYTHON XỬ LÝ THUẬT TOÁN VÀ GIAO DIỆN
-        Các thuật toán hoạt động trên hai bảng chữ cái Z26 và Z29.
+        Các thuật toán cổ điển trên Z26/Z29 và mã hóa khối DES 64 bit.
     -->
     <script type="py">
 from pyscript import when, web
@@ -608,7 +656,11 @@ CIPHER_NAMES = {
     "vigenere": "Vigenère",
     "affine": "Affine",
     "hill": "Hill",
+    "des": "DES",
 }
+
+DES_EXAMPLE_PLAINTEXT = "123456ABCD132536"
+DES_EXAMPLE_KEY = "AABB09182736CCDD"
 
 
 def dom(element_id):
@@ -649,6 +701,8 @@ def get_key_data(cipher):
             ],
             "padding": dom("hill-padding").value,
         }
+    if cipher == "des":
+        return {"key": dom("des-key").value}
     raise ValueError("Loại mã hóa không hợp lệ.")
 
 
@@ -1146,7 +1200,222 @@ def hill_decrypt(text, matrix, padding, alphabet):
 
 
 # ================================================================
-# 9. BỘ ĐIỀU PHỐI THUẬT TOÁN (ĐÃ NỐI VỚI GIAO DIỆN)
+# 9. DES — MÃ HÓA MỘT KHỐI 64 BIT
+# ================================================================
+# Bảng hoán vị, S-box và số bit dịch khóa theo chuẩn FIPS 46-3 / Stallings.
+
+DES_IP = [
+    58, 50, 42, 34, 26, 18, 10, 2,
+    60, 52, 44, 36, 28, 20, 12, 4,
+    62, 54, 46, 38, 30, 22, 14, 6,
+    64, 56, 48, 40, 32, 24, 16, 8,
+    57, 49, 41, 33, 25, 17, 9, 1,
+    59, 51, 43, 35, 27, 19, 11, 3,
+    61, 53, 45, 37, 29, 21, 13, 5,
+    63, 55, 47, 39, 31, 23, 15, 7,
+]
+
+DES_FP = [
+    40, 8, 48, 16, 56, 24, 64, 32,
+    39, 7, 47, 15, 55, 23, 63, 31,
+    38, 6, 46, 14, 54, 22, 62, 30,
+    37, 5, 45, 13, 53, 21, 61, 29,
+    36, 4, 44, 12, 52, 20, 60, 28,
+    35, 3, 43, 11, 51, 19, 59, 27,
+    34, 2, 42, 10, 50, 18, 58, 26,
+    33, 1, 41, 9, 49, 17, 57, 25,
+]
+
+DES_E = [
+    32, 1, 2, 3, 4, 5,
+    4, 5, 6, 7, 8, 9,
+    8, 9, 10, 11, 12, 13,
+    12, 13, 14, 15, 16, 17,
+    16, 17, 18, 19, 20, 21,
+    20, 21, 22, 23, 24, 25,
+    24, 25, 26, 27, 28, 29,
+    28, 29, 30, 31, 32, 1,
+]
+
+DES_P = [
+    16, 7, 20, 21, 29, 12, 28, 17,
+    1, 15, 23, 26, 5, 18, 31, 10,
+    2, 8, 24, 14, 32, 27, 3, 9,
+    19, 13, 30, 6, 22, 11, 4, 25,
+]
+
+DES_PC1 = [
+    57, 49, 41, 33, 25, 17, 9,
+    1, 58, 50, 42, 34, 26, 18,
+    10, 2, 59, 51, 43, 35, 27,
+    19, 11, 3, 60, 52, 44, 36,
+    63, 55, 47, 39, 31, 23, 15,
+    7, 62, 54, 46, 38, 30, 22,
+    14, 6, 61, 53, 45, 37, 29,
+    21, 13, 5, 28, 20, 12, 4,
+]
+
+DES_PC2 = [
+    14, 17, 11, 24, 1, 5,
+    3, 28, 15, 6, 21, 10,
+    23, 19, 12, 4, 26, 8,
+    16, 7, 27, 20, 13, 2,
+    41, 52, 31, 37, 47, 55,
+    30, 40, 51, 45, 33, 48,
+    44, 49, 39, 56, 34, 53,
+    46, 42, 50, 36, 29, 32,
+]
+
+DES_SHIFTS = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1]
+
+DES_SBOXES = [
+    [
+        [14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7],
+        [0, 15, 7, 4, 14, 2, 13, 1, 10, 6, 12, 11, 9, 5, 3, 8],
+        [4, 1, 14, 8, 13, 6, 2, 11, 15, 12, 9, 7, 3, 10, 5, 0],
+        [15, 12, 8, 2, 4, 9, 1, 7, 5, 11, 3, 14, 10, 0, 6, 13],
+    ],
+    [
+        [15, 1, 8, 14, 6, 11, 3, 4, 9, 7, 2, 13, 12, 0, 5, 10],
+        [3, 13, 4, 7, 15, 2, 8, 14, 12, 0, 1, 10, 6, 9, 11, 5],
+        [0, 14, 7, 11, 10, 4, 13, 1, 5, 8, 12, 6, 9, 3, 2, 15],
+        [13, 8, 10, 1, 3, 15, 4, 2, 11, 6, 7, 12, 0, 5, 14, 9],
+    ],
+    [
+        [10, 0, 9, 14, 6, 3, 15, 5, 1, 13, 12, 7, 11, 4, 2, 8],
+        [13, 7, 0, 9, 3, 4, 6, 10, 2, 8, 5, 14, 12, 11, 15, 1],
+        [13, 6, 4, 9, 8, 15, 3, 0, 11, 1, 2, 12, 5, 10, 14, 7],
+        [1, 10, 13, 0, 6, 9, 8, 7, 4, 15, 14, 3, 11, 5, 2, 12],
+    ],
+    [
+        [7, 13, 14, 3, 0, 6, 9, 10, 1, 2, 8, 5, 11, 12, 4, 15],
+        [13, 8, 11, 5, 6, 15, 0, 3, 4, 7, 2, 12, 1, 10, 14, 9],
+        [10, 6, 9, 0, 12, 11, 7, 13, 15, 1, 3, 14, 5, 2, 8, 4],
+        [3, 15, 0, 6, 10, 1, 13, 8, 9, 4, 5, 11, 12, 7, 2, 14],
+    ],
+    [
+        [2, 12, 4, 1, 7, 10, 11, 6, 8, 5, 3, 15, 13, 0, 14, 9],
+        [14, 11, 2, 12, 4, 7, 13, 1, 5, 0, 15, 10, 3, 9, 8, 6],
+        [4, 2, 1, 11, 10, 13, 7, 8, 15, 9, 12, 5, 6, 3, 0, 14],
+        [11, 8, 12, 7, 1, 14, 2, 13, 6, 15, 0, 9, 10, 4, 5, 3],
+    ],
+    [
+        [12, 1, 10, 15, 9, 2, 6, 8, 0, 13, 3, 4, 14, 7, 5, 11],
+        [10, 15, 4, 2, 7, 12, 9, 5, 6, 1, 13, 14, 0, 11, 3, 8],
+        [9, 14, 15, 5, 2, 8, 12, 3, 7, 0, 4, 10, 1, 13, 11, 6],
+        [4, 3, 2, 12, 9, 5, 15, 10, 11, 14, 1, 7, 6, 0, 8, 13],
+    ],
+    [
+        [4, 11, 2, 14, 15, 0, 8, 13, 3, 12, 9, 7, 5, 10, 6, 1],
+        [13, 0, 11, 7, 4, 9, 1, 10, 14, 3, 5, 12, 2, 15, 8, 6],
+        [1, 4, 11, 13, 12, 3, 7, 14, 10, 15, 6, 8, 0, 5, 9, 2],
+        [6, 11, 13, 8, 1, 4, 10, 7, 9, 5, 0, 15, 14, 2, 3, 12],
+    ],
+    [
+        [13, 2, 8, 4, 6, 15, 11, 1, 10, 9, 3, 14, 5, 0, 12, 7],
+        [1, 15, 13, 8, 10, 3, 7, 4, 12, 5, 6, 11, 0, 14, 9, 2],
+        [7, 11, 4, 1, 9, 12, 14, 2, 0, 6, 10, 13, 15, 3, 5, 8],
+        [2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11],
+    ],
+]
+
+
+def des_permute(value, table, in_bits):
+    """Áp dụng bảng hoán vị: vị trí trong table được đánh số từ 1."""
+    result = 0
+    for position in table:
+        bit = (value >> (in_bits - position)) & 1
+        result = (result << 1) | bit
+    return result
+
+
+def des_rotate_left(value, bits, width):
+    """Dịch vòng trái một nửa khóa 28 bit."""
+    bits %= width
+    mask = (1 << width) - 1
+    return ((value << bits) | (value >> (width - bits))) & mask
+
+
+def des_sbox_substitute(bits48):
+    """Thay thế 48 bit thành 32 bit qua 8 S-box."""
+    result = 0
+    for index in range(8):
+        chunk = (bits48 >> (42 - 6 * index)) & 0x3F
+        row = ((chunk >> 5) & 1) << 1 | (chunk & 1)
+        column = (chunk >> 1) & 0xF
+        result = (result << 4) | DES_SBOXES[index][row][column]
+    return result
+
+
+def des_feistel(right32, subkey48):
+    """Hàm F của Feistel: E -> XOR khóa con -> S-box -> P."""
+    expanded = des_permute(right32, DES_E, 32)
+    mixed = expanded ^ subkey48
+    substituted = des_sbox_substitute(mixed)
+    return des_permute(substituted, DES_P, 32)
+
+
+def des_generate_subkeys(key64):
+    """Sinh 16 khóa con 48 bit từ khóa 64 bit (bỏ 8 bit parity qua PC-1)."""
+    key56 = des_permute(key64, DES_PC1, 64)
+    left = (key56 >> 28) & 0xFFFFFFF
+    right = key56 & 0xFFFFFFF
+    subkeys = []
+    for shift in DES_SHIFTS:
+        left = des_rotate_left(left, shift, 28)
+        right = des_rotate_left(right, shift, 28)
+        combined = (left << 28) | right
+        subkeys.append(des_permute(combined, DES_PC2, 56))
+    return subkeys
+
+
+def des_process_block(block64, subkeys):
+    """16 vòng Feistel; hoán vị cuối ghép R16||L16 rồi áp dụng IP^-1."""
+    state = des_permute(block64, DES_IP, 64)
+    left = (state >> 32) & 0xFFFFFFFF
+    right = state & 0xFFFFFFFF
+    for subkey in subkeys:
+        left, right = right, left ^ des_feistel(right, subkey)
+    preoutput = (right << 32) | left
+    return des_permute(preoutput, DES_FP, 64)
+
+
+def parse_hex64(text, label):
+    """Đọc một khối 64 bit từ chuỗi hexadecimal 16 ký tự."""
+    cleaned = "".join(character for character in str(text).strip().upper() if not character.isspace())
+    if cleaned.startswith("0X"):
+        cleaned = cleaned[2:]
+    if len(cleaned) != 16:
+        raise ValueError(f"{label} phải có đúng 16 ký tự hexa (64 bit).")
+    try:
+        return int(cleaned, 16)
+    except ValueError as error:
+        raise ValueError(f"{label} không phải chuỗi hexa hợp lệ.") from error
+
+
+def format_hex64(value):
+    """Định dạng số nguyên 64 bit thành 16 ký tự hexadecimal hoa."""
+    return f"{value:016X}"
+
+
+def des_encrypt(plaintext, key):
+    """Mã hóa một khối DES 64 bit; đầu vào/ra đều là hexadecimal."""
+    block = parse_hex64(plaintext, "Bản rõ DES")
+    key64 = parse_hex64(key, "Khóa DES")
+    return format_hex64(des_process_block(block, des_generate_subkeys(key64)))
+
+
+def des_decrypt(ciphertext, key):
+    """Giải mã một khối DES bằng cách đảo thứ tự 16 khóa con."""
+    block = parse_hex64(ciphertext, "Bản mã DES")
+    key64 = parse_hex64(key, "Khóa DES")
+    return format_hex64(
+        des_process_block(block, list(reversed(des_generate_subkeys(key64))))
+    )
+
+
+# ================================================================
+# 10. BỘ ĐIỀU PHỐI THUẬT TOÁN (ĐÃ NỐI VỚI GIAO DIỆN)
 # ================================================================
 
 def encrypt_text(text, cipher, alphabet, key_data):
@@ -1161,6 +1430,8 @@ def encrypt_text(text, cipher, alphabet, key_data):
         return affine_encrypt(text, key_data["a"], key_data["b"], alphabet)
     if cipher == "hill":
         return hill_encrypt(text, key_data["matrix"], key_data["padding"], alphabet)
+    if cipher == "des":
+        return des_encrypt(text, key_data["key"])
     raise ValueError("Loại mã hóa không hợp lệ.")
 
 
@@ -1176,12 +1447,18 @@ def decrypt_text(text, cipher, alphabet, key_data):
         return affine_decrypt(text, key_data["a"], key_data["b"], alphabet)
     if cipher == "hill":
         return hill_decrypt(text, key_data["matrix"], key_data["padding"], alphabet)
+    if cipher == "des":
+        return des_decrypt(text, key_data["key"])
     raise ValueError("Loại mã hóa không hợp lệ.")
 
 
 # ================================================================
-# 10. SỰ KIỆN GIAO DIỆN (ĐÃ CHUẨN BỊ)
+# 11. SỰ KIỆN GIAO DIỆN (ĐÃ CHUẨN BỊ)
 # ================================================================
+
+def is_des_mode():
+    return dom("cipher-select").value == "des"
+
 
 def update_key_panel():
     """Ẩn/hiện đúng khu vực nhập khóa theo thuật toán được chọn."""
@@ -1191,8 +1468,43 @@ def update_key_panel():
         panel.classList.toggle("active", cipher == selected)
 
 
+def update_des_workspace():
+    """Khi chọn DES: khóa hệ chữ, đổi nhãn và placeholder sang hexadecimal."""
+    des_mode = is_des_mode()
+    alphabet_select = dom("alphabet-select")
+    alphabet_select.disabled = des_mode
+
+    plaintext = dom("plaintext")
+    ciphertext = dom("ciphertext")
+    plaintext_tag = dom("plaintext-tag")
+    ciphertext_tag = dom("ciphertext-tag")
+
+    if des_mode:
+        plaintext_tag.textContent = "Hexa 64 bit"
+        ciphertext_tag.textContent = "Hexa 64 bit"
+        plaintext.placeholder = "Ví dụ: 123456ABCD132536"
+        ciphertext.placeholder = "Kết quả hexa 16 ký tự sẽ xuất hiện tại đây..."
+        plaintext.classList.add("hex-input")
+        ciphertext.classList.add("hex-input")
+        alphabet_select.title = "DES làm việc trên khối 64 bit, không dùng bảng chữ cái Z26/Z29."
+    else:
+        plaintext_tag.textContent = "Đầu vào mã hóa"
+        ciphertext_tag.textContent = "Đầu vào giải mã"
+        plaintext.placeholder = "Nhập nội dung cần mã hóa..."
+        ciphertext.placeholder = "Kết quả mã hóa sẽ xuất hiện tại đây..."
+        plaintext.classList.remove("hex-input")
+        ciphertext.classList.remove("hex-input")
+        alphabet_select.title = ""
+
+
 def update_alphabet_preview():
-    """Cập nhật dòng xem trước bảng chữ cái."""
+    """Cập nhật dòng xem trước bảng chữ cái hoặc gợi ý DES."""
+    if is_des_mode():
+        dom("alphabet-preview").textContent = (
+            "DES: khối 64 bit, nhập hexadecimal (16 ký tự)."
+        )
+        return
+
     system = dom("alphabet-select").value
     alphabet = ALPHABETS[system]
     separator = " " if system == "Z29" else ""
@@ -1202,15 +1514,30 @@ def update_alphabet_preview():
 @when("change", "#cipher-select")
 def handle_cipher_change(event):
     update_key_panel()
+    update_des_workspace()
+    update_alphabet_preview()
     name = CIPHER_NAMES[dom("cipher-select").value]
-    show_message(f"Đã chọn thuật toán {name}.")
+    if is_des_mode():
+        show_message("Đã chọn DES. Nhập bản rõ và khóa dạng hexadecimal 64 bit.")
+    else:
+        show_message(f"Đã chọn thuật toán {name}.")
 
 
 @when("change", "#alphabet-select")
 def handle_alphabet_change(event):
+    if is_des_mode():
+        return
     update_alphabet_preview()
     system = dom("alphabet-select").value
     show_message(f"Đã chuyển sang hệ chữ {system}.")
+
+
+@when("click", "#des-fill-example")
+def handle_des_fill_example(event):
+    dom("des-key").value = DES_EXAMPLE_KEY
+    dom("plaintext").value = DES_EXAMPLE_PLAINTEXT
+    dom("ciphertext").value = ""
+    show_message("Đã điền ví dụ đề bài: bản rõ 123456ABCD132536, khóa AABB09182736CCDD.")
 
 
 @when("click", "#encrypt-button")
@@ -1276,6 +1603,7 @@ def handle_clear(event):
 
 # Khởi tạo trạng thái giao diện sau khi PyScript đã chạy.
 update_key_panel()
+update_des_workspace()
 update_alphabet_preview()
 for button_id in ("encrypt-button", "decrypt-button", "swap-button", "clear-button"):
     dom(button_id).disabled = False
