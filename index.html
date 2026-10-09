@@ -323,6 +323,192 @@
             margin-bottom: 4px;
         }
 
+        /* Hash Algorithm Buttons & Controls */
+        .hash-algo-toolbar {
+            margin-top: 10px;
+        }
+
+        .hash-btn-group {
+            display: flex;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .hash-btn {
+            flex: 1;
+            padding: 7px 10px;
+            border: 1.5px solid #c9d8eb;
+            border-radius: 9px;
+            background: #ffffff;
+            color: var(--navy);
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            text-align: center;
+        }
+
+        .hash-btn:hover {
+            border-color: var(--blue);
+            background: #f0f6ff;
+        }
+
+        .hash-btn.active {
+            border-color: var(--blue);
+            background: var(--blue);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(28, 100, 242, 0.25);
+        }
+
+        .hash-algo-buttons-big {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .hash-big-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            padding: 9px 6px;
+            border: 1.5px solid #c9d8eb;
+            border-radius: 10px;
+            background: #ffffff;
+            color: var(--navy);
+            cursor: pointer;
+            transition: all 0.18s ease;
+        }
+
+        .hash-big-btn:hover {
+            border-color: var(--blue);
+            background: #f0f6ff;
+            transform: translateY(-1px);
+        }
+
+        .hash-big-btn.active {
+            border-color: var(--blue);
+            background: #edf5ff;
+            color: var(--blue-dark);
+            box-shadow: 0 4px 12px rgba(28, 100, 242, 0.18);
+        }
+
+        .hash-big-title {
+            font-size: 0.86rem;
+            font-weight: 800;
+        }
+
+        .hash-big-sub {
+            font-size: 0.68rem;
+            color: var(--muted);
+        }
+
+        .hash-big-btn.active .hash-big-sub {
+            color: var(--blue);
+            font-weight: 600;
+        }
+
+        .hash-engine-box {
+            margin-bottom: 10px;
+            padding: 8px 11px;
+            border-radius: 8px;
+            background: #f8fafc;
+            border: 1px solid var(--line);
+        }
+
+        .engine-radios {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 5px;
+        }
+
+        .engine-radio-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.77rem;
+            color: var(--navy);
+            cursor: pointer;
+        }
+
+        .engine-radio-label input[type="radio"] {
+            cursor: pointer;
+            accent-color: var(--blue);
+        }
+
+        .hash-trace-card {
+            display: none;
+            margin: 0 24px 20px;
+            padding: 16px 20px;
+            border: 1px solid #cce0f8;
+            border-radius: 14px;
+            background: #f7faff;
+            box-shadow: 0 4px 14px rgba(16, 35, 63, 0.05);
+        }
+
+        .hash-trace-card.active {
+            display: block;
+        }
+
+        .trace-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 800;
+            font-size: 0.92rem;
+            color: var(--navy);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #d8e5f5;
+        }
+
+        .trace-section {
+            margin-bottom: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: #ffffff;
+            border: 1px solid #dbe6f5;
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+
+        .trace-section h4 {
+            margin: 0 0 5px;
+            font-size: 0.82rem;
+            color: var(--navy);
+        }
+
+        .trace-code {
+            font-family: "Cascadia Mono", Consolas, "Courier New", monospace;
+            font-size: 0.75rem;
+            background: #f1f5fa;
+            padding: 6px 10px;
+            border-radius: 6px;
+            word-break: break-all;
+            max-height: 130px;
+            overflow-y: auto;
+            color: #0d4b85;
+            user-select: all;
+            margin: 4px 0 0;
+        }
+
+        .trace-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .trace-badge.success {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
         .workspace {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
@@ -614,6 +800,7 @@
             .toolbar,
             .inline-fields,
             .rsa-inputs-grid,
+            .hash-algo-buttons-big,
             .notes {
                 grid-template-columns: 1fr;
             }
@@ -725,6 +912,22 @@
                         <option value="hill">Mã Hill (ma trận 2 × 2)</option>
                     </select>
                     <p id="cipher-desc" class="hint">Mã dịch chuyển ký tự theo độ dịch k modulo m.</p>
+
+                    <!-- Nhóm button chọn nhanh Hàm băm (MD5 / SHA) -->
+                    <div id="hash-algorithm-buttons" class="hash-algo-toolbar" style="display: none;">
+                        <span class="mini-label">Nút chọn hàm băm (MD5 / SHA):</span>
+                        <div class="hash-btn-group" role="group" aria-label="Chọn thuật toán băm">
+                            <button id="btn-hash-md5" class="hash-btn active" type="button">
+                                🏷️ MD5
+                            </button>
+                            <button id="btn-hash-sha256" class="hash-btn" type="button">
+                                🔒 SHA-256
+                            </button>
+                            <button id="btn-hash-sha1" class="hash-btn" type="button">
+                                🛡️ SHA-1
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div>
@@ -833,11 +1036,48 @@
                         </div>
                     </div>
 
-                    <!-- Thông tin Hàm băm -->
+                    <!-- Cấu hình và Thuật toán Hàm băm (MD5 / SHA) -->
                     <div id="key-hash" class="key-panel">
-                        <div class="hash-info-box">
-                            <strong>Hàm băm một chiều (One-Way Hash Function)</strong>
-                            <span>Hàm băm không dùng khóa. Bản rõ dạng chữ cái được chuyển sang chuỗi bit và băm ra thông điệp tóm yếu cố định (MD5: 128 bit, SHA-1: 160 bit, SHA-256: 256 bit).</span>
+                        <!-- Button chọn Hàm băm MD5 / SHA -->
+                        <span class="mini-label" style="margin-bottom: 5px;">Chọn thuật toán băm (MD5 / SHA):</span>
+                        <div class="hash-algo-buttons-big" role="group" aria-label="Lựa chọn hàm băm">
+                            <button id="btn-algo-md5" class="hash-big-btn active" type="button">
+                                <span class="hash-big-title">🏷️ MD5</span>
+                                <span class="hash-big-sub">128 bit / RFC 1321</span>
+                            </button>
+                            <button id="btn-algo-sha256" class="hash-big-btn" type="button">
+                                <span class="hash-big-title">🔒 SHA-256</span>
+                                <span class="hash-big-sub">256 bit / FIPS 180-4</span>
+                            </button>
+                            <button id="btn-algo-sha1" class="hash-big-btn" type="button">
+                                <span class="hash-big-title">🛡️ SHA-1</span>
+                                <span class="hash-big-sub">160 bit / FIPS 180-1</span>
+                            </button>
+                        </div>
+
+                        <!-- Chế độ cài đặt thuật toán băm -->
+                        <div class="hash-engine-box">
+                            <span class="mini-label">Cài đặt thuật toán băm:</span>
+                            <div class="engine-radios">
+                                <label class="engine-radio-label">
+                                    <input type="radio" name="hash-engine-radio" id="engine-custom" value="custom" checked>
+                                    <span>⚡ <strong>Tự cài đặt thuật toán</strong> (Pure Python - theo Viblo)</span>
+                                </label>
+                                <label class="engine-radio-label">
+                                    <input type="radio" name="hash-engine-radio" id="engine-hashlib" value="hashlib">
+                                    <span>📚 Thư viện chuẩn (hashlib)</span>
+                                </label>
+                                <label class="engine-radio-label">
+                                    <input type="radio" name="hash-engine-radio" id="engine-compare" value="compare">
+                                    <span>🔍 So sánh đối chiếu (Tự cài đặt vs hashlib - Kiểm chứng 100%)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Hộp thông tin chi tiết thuật toán đang chọn -->
+                        <div id="hash-info-content" class="hash-info-box">
+                            <strong>Hàm băm MD5 (Message Digest 5)</strong>
+                            <span>Chuẩn RFC 1321: Khối 512 bit (16 từ 32-bit), 4 vòng lặp (F, G, H, I) gồm 64 bước nén, đệm độ dài little-endian, tạo giá trị tóm yếu 128 bit (32 ký tự hex).</span>
                         </div>
                     </div>
                 </div>
@@ -911,6 +1151,21 @@
                 </div>
             </div>
 
+            <!-- PHẦN 5: BẢNG CHI TIẾT TỪNG BƯỚC BĂM (HASH EXECUTION TRACE) -->
+            <div id="hash-trace-card" class="hash-trace-card">
+                <div class="trace-title">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span>📜 Chi tiết các bước thực hiện thuật toán băm (Execution Trace)</span>
+                    </div>
+                    <button id="btn-close-trace" class="btn btn-ghost btn-sm" type="button">Đóng ✕</button>
+                </div>
+                <div id="trace-content">
+                    <p style="color: var(--muted); margin: 0; font-size: 0.85rem;">
+                        Nhấn nút <strong>"Tạo mã băm (Hash) →"</strong> để xem chi tiết các bước: Padding bit, Khởi tạo thanh ghi, Message Schedule W, và các vòng lặp nén.
+                    </p>
+                </div>
+            </div>
+
             <!-- TRẠNG THÁI & XEM TRƯỚC BẢNG CHỮ CÁI -->
             <div class="status-area" aria-live="polite">
                 <p id="status-message" class="status-message">Đang tải môi trường Python...</p>
@@ -920,7 +1175,7 @@
             </div>
         </section>
 
-        <!-- PHẦN 5: GHI CHÚ KIẾN THỨC -->
+        <!-- PHẦN 6: GHI CHÚ KIẾN THỨC -->
         <section class="notes" aria-label="Ghi chú sử dụng">
             <article class="note">
                 <h3>Quy ước Z26 &amp; Z29</h3>
@@ -935,8 +1190,8 @@
                 <p>DES xử lý khối 64 bit qua 16 vòng Feistel. AES xử lý khối 128 bit qua 10 vòng mã hóa với SubBytes, ShiftRows, MixColumns và AddRoundKey.</p>
             </article>
             <article class="note">
-                <h3>RSA &amp; Hàm băm (MD5, SHA)</h3>
-                <p>RSA sử dụng cặp khóa công khai (e, n) và bí mật (d, n). Hàm băm MD5 (128 bit), SHA-1 (160 bit), SHA-256 (256 bit) tạo giá trị băm một chiều.</p>
+                <h3>Hàm băm MD5 &amp; SHA (Tự cài đặt)</h3>
+                <p>Cài đặt thuần Python (RFC 1321 &amp; FIPS 180-4) với Padding bit, thanh ghi trạng thái, vòng lặp nén và kiểm chứng 100% với hashlib. Tham khảo: <a href="https://viblo.asia/p/gioi-thieu-ham-bam-md5-LzD5d63wZjY" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">Viblo MD5</a> | <a href="https://viblo.asia/p/cach-hoat-dong-cua-sha-256-1VgZvJPmZAw" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">Viblo SHA-256</a>.</p>
             </article>
         </section>
 
@@ -953,6 +1208,7 @@
 from pyscript import when, web
 import unicodedata
 import hashlib
+import math
 import re
 
 
@@ -1007,13 +1263,13 @@ CATEGORIES = {
         "name": "Hàm băm",
         "ciphers": {
             "md5": "MD5 (Message Digest 5 - 128 bit)",
-            "sha1": "SHA-1 (Secure Hash Algorithm 1 - 160 bit)",
             "sha256": "SHA-256 (Secure Hash Algorithm 256-bit)",
+            "sha1": "SHA-1 (Secure Hash Algorithm 1 - 160 bit)",
         },
         "descriptions": {
-            "md5": "Hàm băm MD5 (RFC 1321): tạo giá trị băm thông điệp tóm yếu 128 bit (32 ký tự hex).",
-            "sha1": "Hàm băm SHA-1 (FIPS 180-4): tạo giá trị băm 160 bit (40 ký tự hex).",
-            "sha256": "Hàm băm an toàn SHA-256 (FIPS 180-4): tạo giá trị băm 256 bit (64 ký tự hex).",
+            "md5": "Hàm băm MD5 (RFC 1321): Tạo mã băm 128 bit (32 hex) qua 4 vòng 64 bước lặp với các hàm phi tuyến F, G, H, I.",
+            "sha256": "Hàm băm an toàn SHA-256 (FIPS 180-4): Tạo mã băm 256 bit (64 hex) qua 64 vòng lặp nén với Message Schedule.",
+            "sha1": "Hàm băm SHA-1 (FIPS 180-1): Tạo mã băm 160 bit (40 hex) qua 80 vòng nén.",
         }
     }
 }
@@ -1963,22 +2219,502 @@ def rsa_decrypt(ciphertext, key_data, alphabet):
 
 
 # ================================================================
-# 8. HÀM BĂM: MD5, SHA-1, SHA-256
+# 8. HÀM BĂM: MD5, SHA-1, SHA-256 (TỰ CÀI ĐẶT PURE PYTHON & KIỂM CHỨNG)
 # ================================================================
 
-def md5_hash(text, alphabet):
-    norm = normalize_text(text, alphabet)
-    return hashlib.md5(norm.encode("utf-8")).hexdigest().upper()
+# --- 8.1 THUẬT TOÁN MD5 (RFC 1321 & BÀI VIẾT VIBLO) ---
+# Tham khảo: https://viblo.asia/p/gioi-thieu-ham-bam-md5-LzD5d63wZjY
+
+MD5_S = [
+    7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,  7, 12, 17, 22,
+    5,  9, 14, 20,  5,  9, 14, 20,  5,  9, 14, 20,  5,  9, 14, 20,
+    4, 11, 16, 23,  4, 11, 16, 23,  4, 11, 16, 23,  4, 11, 16, 23,
+    6, 10, 15, 21,  6, 10, 15, 21,  6, 10, 15, 21,  6, 10, 15, 21,
+]
+
+MD5_K = [
+    0xD76AA478, 0xE8C7B756, 0x242070DB, 0xC1BDCEEE,
+    0xF57C0FAF, 0x4787C62A, 0xA8304613, 0xFD469501,
+    0x698098D8, 0x8B44F7AF, 0xFFFF5BB1, 0x895CD7BE,
+    0x6B901122, 0xFD987193, 0xA679438E, 0x49B40821,
+    0xF61E2562, 0xC040B340, 0x265E5A51, 0xE9B6C7AA,
+    0xD62F105D, 0x02441453, 0xD8A1E681, 0xE7D3FBC8,
+    0x21E1CDE6, 0xC33707D6, 0xF4D50D87, 0x455A14ED,
+    0xA9E3E905, 0xFCEFA3F8, 0x676F02D9, 0x8D2A4C8A,
+    0xFFFA3942, 0x8771F681, 0x6D9D6122, 0xFDE5380C,
+    0xA4BEEA44, 0x4BDECFA9, 0xF6BB4B60, 0xBEBFBC70,
+    0x289B7EC6, 0xEAA127FA, 0xD4EF3085, 0x04881D05,
+    0xD9D4D039, 0xE6DB99E5, 0x1FA27CF8, 0xC4AC5665,
+    0xF4292244, 0x432AFF97, 0xAB9423A7, 0xFC93A039,
+    0x655B59C3, 0x8F0CCC92, 0xFFEFF47D, 0x85845DD1,
+    0x6FA87E4F, 0xFE2CE6E0, 0xA3014314, 0x4E0811A1,
+    0xF7537E82, 0xBD3AF235, 0x2AD7D2BB, 0xEB86D391,
+]
 
 
-def sha1_hash(text, alphabet):
-    norm = normalize_text(text, alphabet)
-    return hashlib.sha1(norm.encode("utf-8")).hexdigest().upper()
+def md5_custom_bytes(data: bytes):
+    """
+    Thuật toán MD5 thuần Python (RFC 1321).
+    Băm mảng byte thành chuỗi hex 128 bit (32 ký tự).
+    """
+    orig_len_bits = len(data) * 8
+    padded = bytearray(data)
+    padded.append(0x80)
+    while len(padded) % 64 != 56:
+        padded.append(0x00)
+    padded.extend((orig_len_bits & 0xFFFFFFFFFFFFFFFF).to_bytes(8, byteorder="little"))
+
+    A = 0x67452301
+    B = 0xEFCDAB89
+    C = 0x98BADCFE
+    D = 0x10325476
+
+    def rotl32(x, n):
+        return ((x << n) | (x >> (32 - n))) & 0xFFFFFFFF
+
+    trace_blocks = []
+    num_blocks = len(padded) // 64
+
+    for b_idx in range(num_blocks):
+        block = padded[b_idx * 64 : (b_idx + 1) * 64]
+        M = [int.from_bytes(block[j * 4 : (j + 1) * 4], byteorder="little") for j in range(16)]
+
+        a0, b0, c0, d0 = A, B, C, D
+
+        for i in range(64):
+            if 0 <= i <= 15:
+                f = (B & C) | ((~B & 0xFFFFFFFF) & D)
+                g = i
+            elif 16 <= i <= 31:
+                f = (B & D) | (C & (~D & 0xFFFFFFFF))
+                g = (5 * i + 1) % 16
+            elif 32 <= i <= 47:
+                f = B ^ C ^ D
+                g = (3 * i + 5) % 16
+            else:
+                f = C ^ (B | (~D & 0xFFFFFFFF))
+                g = (7 * i) % 16
+
+            temp = (A + f + MD5_K[i] + M[g]) & 0xFFFFFFFF
+            rotated = rotl32(temp, MD5_S[i])
+            A = D
+            D = C
+            C = B
+            B = (B + rotated) & 0xFFFFFFFF
+
+        A = (A + a0) & 0xFFFFFFFF
+        B = (B + b0) & 0xFFFFFFFF
+        C = (C + c0) & 0xFFFFFFFF
+        D = (D + d0) & 0xFFFFFFFF
+
+        trace_blocks.append({
+            "block_num": b_idx + 1,
+            "registers": f"A={A:08X}, B={B:08X}, C={C:08X}, D={D:08X}",
+            "words_sample": f"M[0]={M[0]:08X}, M[1]={M[1]:08X}, ..., M[15]={M[15]:08X}",
+        })
+
+    digest_bytes = (
+        A.to_bytes(4, byteorder="little")
+        + B.to_bytes(4, byteorder="little")
+        + C.to_bytes(4, byteorder="little")
+        + D.to_bytes(4, byteorder="little")
+    )
+    digest_hex = digest_bytes.hex().upper()
+
+    return digest_hex, {
+        "algo": "MD5",
+        "standard": "RFC 1321",
+        "orig_bytes": len(data),
+        "padded_bytes": len(padded),
+        "blocks_count": num_blocks,
+        "endian": "Little-Endian",
+        "blocks": trace_blocks,
+        "final_registers": f"A={A:08X}, B={B:08X}, C={C:08X}, D={D:08X}",
+    }
 
 
-def sha256_hash(text, alphabet):
-    norm = normalize_text(text, alphabet)
-    return hashlib.sha256(norm.encode("utf-8")).hexdigest().upper()
+# --- 8.2 THUẬT TOÁN SHA-256 (FIPS 180-4 & BÀI VIẾT VIBLO) ---
+# Tham khảo: https://viblo.asia/p/cach-hoat-dong-cua-sha-256-1VgZvJPmZAw
+
+SHA256_K = [
+    0x428A2F98, 0x71374491, 0xB5C0FBCF, 0xE9B5DBA5,
+    0x3956C25B, 0x59F111F1, 0x923F82A4, 0xAB1C5ED5,
+    0xD807AA98, 0x12835B01, 0x243185BE, 0x550C7DC3,
+    0x72BE5D74, 0x80DEB1FE, 0x9BDC06A7, 0xC19BF174,
+    0xE49B69C1, 0xEFBE4786, 0x0FC19DC6, 0x240CA1CC,
+    0x2DE92C6F, 0x4A7484AA, 0x5CB0A9DC, 0x76F988DA,
+    0x983E5152, 0xA831C66D, 0xB00327C8, 0xBF597FC7,
+    0xC6E00BF3, 0xD5A79147, 0x06CA6351, 0x14292967,
+    0x27B70A85, 0x2E1B2138, 0x4D2C6DFC, 0x53380D13,
+    0x650A7354, 0x766A0ABB, 0x81C2C92E, 0x92722C85,
+    0xA2BFE8A1, 0xA81A664B, 0xC24B8B70, 0xC76C51A3,
+    0xD192E819, 0xD6990624, 0xF40E3585, 0x106AA070,
+    0x19A4C116, 0x1E376C08, 0x2748774C, 0x34B0BCB5,
+    0x391C0CB3, 0x4ED8AA4A, 0x5B9CCA4F, 0x682E6FF3,
+    0x748F82EE, 0x78A5636F, 0x84C87814, 0x8CC70208,
+    0x90BEFFFA, 0xA4506CEB, 0xBEF9A3F7, 0xC67178F2,
+]
+
+SHA256_H_INIT = [
+    0x6A09E667, 0xBB67AE85, 0x3C6EF372, 0xA54FF53A,
+    0x510E527F, 0x9B05688C, 0x1F83D9AB, 0x5BE0CD19,
+]
+
+
+def sha256_custom_bytes(data: bytes):
+    """
+    Thuật toán SHA-256 thuần Python (FIPS 180-4).
+    Băm mảng byte thành chuỗi hex 256 bit (64 ký tự).
+    """
+    orig_len_bits = len(data) * 8
+    padded = bytearray(data)
+    padded.append(0x80)
+    while len(padded) % 64 != 56:
+        padded.append(0x00)
+    padded.extend((orig_len_bits & 0xFFFFFFFFFFFFFFFF).to_bytes(8, byteorder="big"))
+
+    H = list(SHA256_H_INIT)
+
+    def rotr32(x, n):
+        return ((x >> n) | (x << (32 - n))) & 0xFFFFFFFF
+
+    trace_blocks = []
+    num_blocks = len(padded) // 64
+
+    for b_idx in range(num_blocks):
+        block = padded[b_idx * 64 : (b_idx + 1) * 64]
+        # Tạo Message Schedule W[0..63]
+        W = [int.from_bytes(block[j * 4 : (j + 1) * 4], byteorder="big") for j in range(16)]
+        for t in range(16, 64):
+            s0 = rotr32(W[t - 15], 7) ^ rotr32(W[t - 15], 18) ^ (W[t - 15] >> 3)
+            s1 = rotr32(W[t - 2], 17) ^ rotr32(W[t - 2], 19) ^ (W[t - 2] >> 10)
+            W.append((W[t - 16] + s0 + W[t - 7] + s1) & 0xFFFFFFFF)
+
+        a, b, c, d, e, f, g, h = H
+
+        for t in range(64):
+            S1 = rotr32(e, 6) ^ rotr32(e, 11) ^ rotr32(e, 25)
+            ch = (e & f) ^ ((~e & 0xFFFFFFFF) & g)
+            temp1 = (h + S1 + ch + SHA256_K[t] + W[t]) & 0xFFFFFFFF
+            S0 = rotr32(a, 2) ^ rotr32(a, 13) ^ rotr32(a, 22)
+            maj = (a & b) ^ (a & c) ^ (b & c)
+            temp2 = (S0 + maj) & 0xFFFFFFFF
+
+            h = g
+            g = f
+            f = e
+            e = (d + temp1) & 0xFFFFFFFF
+            d = c
+            c = b
+            b = a
+            a = (temp1 + temp2) & 0xFFFFFFFF
+
+        H[0] = (H[0] + a) & 0xFFFFFFFF
+        H[1] = (H[1] + b) & 0xFFFFFFFF
+        H[2] = (H[2] + c) & 0xFFFFFFFF
+        H[3] = (H[3] + d) & 0xFFFFFFFF
+        H[4] = (H[4] + e) & 0xFFFFFFFF
+        H[5] = (H[5] + f) & 0xFFFFFFFF
+        H[6] = (H[6] + g) & 0xFFFFFFFF
+        H[7] = (H[7] + h) & 0xFFFFFFFF
+
+        trace_blocks.append({
+            "block_num": b_idx + 1,
+            "registers": f"H0..H3: {H[0]:08X} {H[1]:08X} {H[2]:08X} {H[3]:08X}<br>H4..H7: {H[4]:08X} {H[5]:08X} {H[6]:08X} {H[7]:08X}",
+            "words_sample": f"W[0]={W[0]:08X}, W[1]={W[1]:08X}, ..., W[63]={W[63]:08X}",
+        })
+
+    digest_hex = "".join(f"{val:08X}" for val in H)
+
+    return digest_hex, {
+        "algo": "SHA-256",
+        "standard": "FIPS 180-4",
+        "orig_bytes": len(data),
+        "padded_bytes": len(padded),
+        "blocks_count": num_blocks,
+        "endian": "Big-Endian",
+        "blocks": trace_blocks,
+        "final_registers": " ".join(f"H{i}={H[i]:08X}" for i in range(8)),
+    }
+
+
+# --- 8.3 THUẬT TOÁN SHA-1 (FIPS 180-1) ---
+
+def sha1_custom_bytes(data: bytes):
+    """
+    Thuật toán SHA-1 thuần Python (FIPS 180-1).
+    Băm mảng byte thành chuỗi hex 160 bit (40 ký tự).
+    """
+    orig_len_bits = len(data) * 8
+    padded = bytearray(data)
+    padded.append(0x80)
+    while len(padded) % 64 != 56:
+        padded.append(0x00)
+    padded.extend((orig_len_bits & 0xFFFFFFFFFFFFFFFF).to_bytes(8, byteorder="big"))
+
+    h0 = 0x67452301
+    h1 = 0xEFCDAB89
+    h2 = 0x98BADCFE
+    h3 = 0x10325476
+    h4 = 0xC3D2E1F0
+
+    def rotl32(x, n):
+        return ((x << n) | (x >> (32 - n))) & 0xFFFFFFFF
+
+    trace_blocks = []
+    num_blocks = len(padded) // 64
+
+    for b_idx in range(num_blocks):
+        block = padded[b_idx * 64 : (b_idx + 1) * 64]
+        W = [int.from_bytes(block[j * 4 : (j + 1) * 4], byteorder="big") for j in range(16)]
+        for t in range(16, 80):
+            W.append(rotl32(W[t - 3] ^ W[t - 8] ^ W[t - 14] ^ W[t - 16], 1))
+
+        a, b, c, d, e = h0, h1, h2, h3, h4
+
+        for i in range(80):
+            if 0 <= i <= 19:
+                f = (b & c) | ((~b & 0xFFFFFFFF) & d)
+                k = 0x5A827999
+            elif 20 <= i <= 39:
+                f = b ^ c ^ d
+                k = 0x6ED9EBA1
+            elif 40 <= i <= 59:
+                f = (b & c) | (b & d) | (c & d)
+                k = 0x8F1BBCDC
+            else:
+                f = b ^ c ^ d
+                k = 0xCA62C1D6
+
+            temp = (rotl32(a, 5) + f + e + k + W[i]) & 0xFFFFFFFF
+            e = d
+            d = c
+            c = rotl32(b, 30)
+            b = a
+            a = temp
+
+        h0 = (h0 + a) & 0xFFFFFFFF
+        h1 = (h1 + b) & 0xFFFFFFFF
+        h2 = (h2 + c) & 0xFFFFFFFF
+        h3 = (h3 + d) & 0xFFFFFFFF
+        h4 = (h4 + e) & 0xFFFFFFFF
+
+        trace_blocks.append({
+            "block_num": b_idx + 1,
+            "registers": f"H0={h0:08X}, H1={h1:08X}, H2={h2:08X}, H3={h3:08X}, H4={h4:08X}",
+            "words_sample": f"W[0]={W[0]:08X}, W[1]={W[1]:08X}, ..., W[79]={W[79]:08X}",
+        })
+
+    digest_hex = f"{h0:08X}{h1:08X}{h2:08X}{h3:08X}{h4:08X}"
+
+    return digest_hex, {
+        "algo": "SHA-1",
+        "standard": "FIPS 180-1",
+        "orig_bytes": len(data),
+        "padded_bytes": len(padded),
+        "blocks_count": num_blocks,
+        "endian": "Big-Endian",
+        "blocks": trace_blocks,
+        "final_registers": f"H0={h0:08X}, H1={h1:08X}, H2={h2:08X}, H3={h3:08X}, H4={h4:08X}",
+    }
+
+
+# --- 8.4 ĐIỀU PHỐI VÀ ĐỐI SOÁT HÀM BĂM ---
+
+def get_hash_engine():
+    """Lấy chế độ thực thi thuật toán băm (custom, hashlib, compare)."""
+    try:
+        if dom("engine-custom").checked:
+            return "custom"
+        if dom("engine-hashlib").checked:
+            return "hashlib"
+        if dom("engine-compare").checked:
+            return "compare"
+    except Exception:
+        pass
+    return "custom"
+
+
+def compute_hash(data: bytes, cipher: str, engine_mode: str = "custom"):
+    """
+    Tính mã băm theo thuật toán đã chọn và chế độ thực thi.
+    Trả về (digest, trace_info, hashlib_digest).
+    """
+    # 1. Tính toán bằng hashlib chuẩn của Python
+    if cipher == "md5":
+        hashlib_digest = hashlib.md5(data).hexdigest().upper()
+    elif cipher == "sha256":
+        hashlib_digest = hashlib.sha256(data).hexdigest().upper()
+    elif cipher == "sha1":
+        hashlib_digest = hashlib.sha1(data).hexdigest().upper()
+    else:
+        raise ValueError(f"Thuật toán băm '{cipher}' không được hỗ trợ.")
+
+    # 2. Tính toán bằng thuật toán Pure Python tự cài đặt
+    if cipher == "md5":
+        custom_digest, trace = md5_custom_bytes(data)
+    elif cipher == "sha256":
+        custom_digest, trace = sha256_custom_bytes(data)
+    elif cipher == "sha1":
+        custom_digest, trace = sha1_custom_bytes(data)
+
+    if engine_mode == "hashlib":
+        return hashlib_digest, trace, hashlib_digest
+    elif engine_mode == "compare":
+        return custom_digest, trace, hashlib_digest
+    else:  # custom
+        return custom_digest, trace, hashlib_digest
+
+
+def md5_hash(text, alphabet=None):
+    digest, _, _ = compute_hash(text.encode("utf-8"), "md5", get_hash_engine())
+    return digest
+
+
+def sha1_hash(text, alphabet=None):
+    digest, _, _ = compute_hash(text.encode("utf-8"), "sha1", get_hash_engine())
+    return digest
+
+
+def sha256_hash(text, alphabet=None):
+    digest, _, _ = compute_hash(text.encode("utf-8"), "sha256", get_hash_engine())
+    return digest
+
+
+def update_hash_info_panel(cipher):
+    """Cập nhật thông tin chi tiết thuật toán băm đang chọn."""
+    info_el = dom("hash-info-content")
+    if not info_el:
+        return
+
+    if cipher == "md5":
+        info_el.innerHTML = (
+            "<div>🏷️ <strong>Thuật toán:</strong> MD5 (Message Digest 5 - RFC 1321)</div>"
+            "<div>📏 <strong>Độ dài mã băm:</strong> 128 bit (16 byte, 32 ký tự Hexadecimal)</div>"
+            "<div>📦 <strong>Khối xử lý:</strong> 512 bit (64 byte = 16 từ 32-bit, Little-Endian)</div>"
+            "<div>🔄 <strong>Cấu trúc:</strong> 4 vòng × 16 bước = 64 bước lặp với 4 thanh ghi A, B, C, D</div>"
+            "<div>⚙️ <strong>Hàm phi tuyến:</strong> F(B,C,D), G(B,C,D), H(B,C,D), I(B,C,D) kết hợp bảng hằng số sin T[i]</div>"
+        )
+    elif cipher == "sha256":
+        info_el.innerHTML = (
+            "<div>🔒 <strong>Thuật toán:</strong> SHA-256 (Secure Hash Algorithm 256-bit - FIPS 180-4)</div>"
+            "<div>📏 <strong>Độ dài mã băm:</strong> 256 bit (32 byte, 64 ký tự Hexadecimal)</div>"
+            "<div>📦 <strong>Khối xử lý:</strong> 512 bit (64 byte = 16 từ 32-bit mở rộng thành 64 từ W[0..63], Big-Endian)</div>"
+            "<div>🔄 <strong>Cấu trúc:</strong> 64 vòng lặp nén với 8 thanh ghi H0..H7 và 64 hằng số lập phương nguyên tố K[0..63]</div>"
+            "<div>⚙️ <strong>Hàm logic:</strong> Ch(e,f,g), Maj(a,b,c), Σ0(a), Σ1(e), σ0(W), σ1(W) tạo độ khuếch tán cao</div>"
+        )
+    elif cipher == "sha1":
+        info_el.innerHTML = (
+            "<div>🛡️ <strong>Thuật toán:</strong> SHA-1 (Secure Hash Algorithm 1 - FIPS 180-1)</div>"
+            "<div>📏 <strong>Độ dài mã băm:</strong> 160 bit (20 byte, 40 ký tự Hexadecimal)</div>"
+            "<div>📦 <strong>Khối xử lý:</strong> 512 bit (64 byte = 16 từ 32-bit mở rộng thành 80 từ W[0..79])</div>"
+            "<div>🔄 <strong>Cấu trúc:</strong> 4 giai đoạn × 20 bước = 80 vòng nén với 5 thanh ghi H0..H4</div>"
+            "<div>⚙️ <strong>Hàm logic:</strong> Ch(b,c,d), Parity(b,c,d), Maj(b,c,d) qua 4 khoảng giá trị hằng số K</div>"
+        )
+
+
+def select_hash_algorithm(algo_name):
+    """Chọn thuật toán băm (MD5 / SHA-256 / SHA-1) và đồng bộ toàn bộ giao diện."""
+    if algo_name not in ("md5", "sha256", "sha1"):
+        return
+
+    # Nếu đang ở nhóm khác, chuyển sang nhóm hàm băm
+    if get_current_category() != "hash":
+        select_category("hash")
+
+    # Đặt giá trị cho dropdown cipher-select
+    dom("cipher-select").value = algo_name
+    update_ui_for_cipher()
+    show_message(f"Đã chọn thuật toán băm: {algo_name.upper()}.")
+
+
+def format_trace_html(trace, engine_mode, digest, hashlib_digest):
+    """Định dạng báo cáo phân tích thuật toán băm (Trace) hiển thị trực quan."""
+    algo = trace.get("algo", "HASH")
+    standard = trace.get("standard", "")
+    orig_bytes = trace.get("orig_bytes", 0)
+    padded_bytes = trace.get("padded_bytes", 0)
+    blocks_count = trace.get("blocks_count", 0)
+    endian = trace.get("endian", "")
+    blocks = trace.get("blocks", [])
+
+    html = []
+
+    # 1. Hộp trạng thái đối soát / chế độ thực thi
+    if engine_mode == "compare":
+        is_match = (digest == hashlib_digest)
+        match_icon = "✅" if is_match else "❌"
+        match_title = "ĐỐI SOÁT CHÍNH XÁC 100% (Bit-for-Bit Identical)" if is_match else "PHÁT HIỆN LỆCH GIÁ TRỊ BĂM"
+        border_color = "rgba(34, 197, 94, 0.4)" if is_match else "rgba(239, 68, 68, 0.4)"
+        bg_color = "rgba(34, 197, 94, 0.1)" if is_match else "rgba(239, 68, 68, 0.1)"
+
+        html.append(f"""
+        <div style="background: {bg_color}; border: 1px solid {border_color}; border-radius: 8px; padding: 12px; margin-bottom: 14px;">
+            <div style="font-weight: 700; color: {'#16a34a' if is_match else '#dc2626'}; margin-bottom: 8px;">
+                {match_icon} {match_title}
+            </div>
+            <div style="font-size: 0.85rem; line-height: 1.6; font-family: monospace;">
+                <div>⚡ <strong>Tự cài đặt (Pure Python):</strong> {digest}</div>
+                <div>📚 <strong>Thư viện chuẩn (hashlib):</strong> {hashlib_digest}</div>
+            </div>
+            <div style="margin-top: 8px; font-size: 0.8rem; color: var(--text-muted);">
+                Kết quả chứng minh thuật toán Pure Python tự lập trình theo chuẩn {standard} và bài viết Viblo hoạt động hoàn toàn chính xác.
+            </div>
+        </div>
+        """)
+    elif engine_mode == "custom":
+        html.append(f"""
+        <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px;">
+            <div style="font-weight: 600; color: var(--accent); margin-bottom: 4px;">
+                ⚡ Chế độ: Thuật toán Pure Python tự cài đặt ({standard} - tham khảo Viblo)
+            </div>
+            <div style="font-size: 0.82rem; font-family: monospace; word-break: break-all; color: var(--text-main);">
+                Mã băm hoàn tất: <strong>{digest}</strong>
+            </div>
+        </div>
+        """)
+    else:
+        html.append(f"""
+        <div style="background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px;">
+            <div style="font-weight: 600; color: #ca8a04; margin-bottom: 4px;">
+                📚 Chế độ: Thư viện chuẩn hashlib của Python
+            </div>
+            <div style="font-size: 0.82rem; font-family: monospace; word-break: break-all; color: var(--text-main);">
+                Mã băm hoàn tất: <strong>{digest}</strong>
+            </div>
+        </div>
+        """)
+
+    # 2. Thông tin phân tích Padding & Blocks
+    pad_bits = padded_bytes * 8
+    orig_bits = orig_bytes * 8
+    html.append(f"""
+    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px 12px; margin-bottom: 12px; font-size: 0.85rem; line-height: 1.5;">
+        <div style="font-weight: 600; margin-bottom: 6px; color: var(--text-main);">
+            📦 Phân tích khối và quy trình đệm (Padding Analysis):
+        </div>
+        <div>• <strong>Chiều dài bản rõ:</strong> {orig_bytes} byte ({orig_bits} bit)</div>
+        <div>• <strong>Chiều dài sau khi đệm (Padding):</strong> {padded_bytes} byte ({pad_bits} bit)</div>
+        <div>• <strong>Số khối xử lý (512 bit/khối):</strong> {blocks_count} khối ({blocks_count * 512} bit)</div>
+        <div>• <strong>Quy tắc đệm bit:</strong> Thêm byte 0x80 (bit 1) → thêm byte 0x00 đến khi len % 64 = 56 → nối 64-bit độ dài ban đầu ({endian})</div>
+    </div>
+    """)
+
+    # 3. Trạng thái các thanh ghi qua từng khối
+    html.append('<div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 6px;">🔄 Vết chuyển trạng thái các thanh ghi (Register State Transitions):</div>')
+    for b in blocks:
+        b_num = b.get("block_num", 1)
+        regs = b.get("registers", "")
+        words = b.get("words_sample", "")
+        html.append(f"""
+        <div style="background: var(--bg-body); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 10px; margin-bottom: 8px; font-family: monospace; font-size: 0.8rem;">
+            <div style="color: var(--accent); font-weight: 700; margin-bottom: 4px;">▶ Khối {b_num} / {blocks_count}:</div>
+            <div style="color: var(--text-muted); margin-bottom: 3px;">{words}</div>
+            <div style="color: var(--text-main); font-weight: 600;">{regs}</div>
+        </div>
+        """)
+
+    return "".join(html)
 
 
 # ================================================================
@@ -2204,6 +2940,11 @@ def update_ui_for_cipher():
     pt_tag = dom("plaintext-tag")
     ct_tag = dom("ciphertext-tag")
 
+    # Hiện/ẩn cụm nút chọn nhanh hàm băm (MD5 / SHA) trên Toolbar
+    tb_hash = dom("hash-algorithm-buttons")
+    if tb_hash:
+        tb_hash.style.display = "flex" if is_hash else "none"
+
     if is_hash:
         encrypt_btn.textContent = "Tạo mã băm (Hash) →"
         decrypt_btn.textContent = "← Không giải mã (1 chiều)"
@@ -2212,6 +2953,18 @@ def update_ui_for_cipher():
         ct_heading.textContent = "Giá trị băm (Hash Digest)"
         pt_tag.textContent = "Đầu vào chuỗi băm"
         ct_tag.textContent = "Thông điệp tóm yếu"
+
+        # Đồng bộ class 'active' cho các nút chọn thuật toán băm
+        for a in ("md5", "sha256", "sha1"):
+            btn_tb = dom(f"btn-hash-{a}")
+            if btn_tb:
+                btn_tb.classList.toggle("active", cipher == a)
+            btn_big = dom(f"btn-algo-{a}")
+            if btn_big:
+                btn_big.classList.toggle("active", cipher == a)
+
+        # Cập nhật bảng thông tin chi tiết và link Viblo
+        update_hash_info_panel(cipher)
     else:
         encrypt_btn.textContent = "Mã hóa →"
         decrypt_btn.textContent = "← Giải mã"
@@ -2220,6 +2973,11 @@ def update_ui_for_cipher():
         ct_heading.textContent = "Bản mã"
         pt_tag.textContent = "Đầu vào mã hóa"
         ct_tag.textContent = "Đầu vào giải mã"
+
+        # Ẩn bảng Trace khi chuyển sang mã hóa khác
+        trace_card = dom("hash-trace-card")
+        if trace_card:
+            trace_card.style.display = "none"
 
     # Nếu là RSA, cập nhật thông số RSA hiển thị
     if cipher == "rsa":
@@ -2384,23 +3142,44 @@ def handle_rsa_input(event):
 # --- Các thao tác Mã hóa, Giải mã, Đổi chỗ, Xóa ---
 @when("click", "#encrypt-button")
 def handle_encrypt(event):
+    cat_key = get_current_category()
     plaintext = dom("plaintext").value
-    if not plaintext.strip():
-        show_message("Hãy nhập bản rõ trước khi mã hóa.", "warning")
+    if cat_key != "hash" and not plaintext.strip():
+        show_message("Hãy nhập bản rõ trước khi thực hiện mã hóa.", "warning")
         return
-
     cipher = dom("cipher-select").value
     alphabet = get_selected_alphabet()
     bit_mode = get_bit_mode()
 
     try:
-        key_data = get_key_data(cipher)
-        result = encrypt_text(plaintext, cipher, alphabet, key_data, bit_mode)
-        dom("ciphertext").value = result
-        update_bit_inspector()
-        if get_current_category() == "hash":
-            show_message("Tạo mã băm thành công.", "success")
+        if cat_key == "hash":
+            engine_mode = get_hash_engine()
+            data = plaintext.encode("utf-8")
+            digest, trace_info, hashlib_digest = compute_hash(data, cipher, engine_mode)
+            dom("ciphertext").value = digest
+            update_bit_inspector()
+
+            # Hiển thị và cập nhật bảng Trace phân tích thuật toán
+            trace_card = dom("hash-trace-card")
+            if trace_card:
+                trace_card.style.display = "block"
+                dom("trace-content").innerHTML = format_trace_html(trace_info, engine_mode, digest, hashlib_digest)
+                dom("trace-content").style.display = "block"
+
+            if engine_mode == "compare":
+                if digest == hashlib_digest:
+                    show_message(f"✅ Đối soát 100%: Tự cài đặt và hashlib cho kết quả {cipher.upper()} hoàn toàn trùng khớp!", "success")
+                else:
+                    show_message(f"⚠️ Phát hiện lệch giá trị {cipher.upper()} giữa Tự cài đặt và hashlib!", "error")
+            elif engine_mode == "custom":
+                show_message(f"Tạo mã băm {cipher.upper()} bằng thuật toán tự cài đặt (Pure Python) thành công.", "success")
+            else:
+                show_message(f"Tạo mã băm {cipher.upper()} bằng thư viện hashlib thành công.", "success")
         else:
+            key_data = get_key_data(cipher)
+            result = encrypt_text(plaintext, cipher, alphabet, key_data, bit_mode)
+            dom("ciphertext").value = result
+            update_bit_inspector()
             show_message("Mã hóa thành công.", "success")
     except NotImplementedError as error:
         show_message(str(error), "warning")
@@ -2450,6 +3229,58 @@ def handle_clear(event):
     dom("ciphertext").value = ""
     update_bit_inspector()
     show_message("Đã xóa dữ liệu.")
+
+
+# --- Sự kiện nút chọn thuật toán băm (MD5 / SHA) ở Toolbar ---
+@when("click", "#btn-hash-md5")
+def handle_btn_hash_md5(event):
+    select_hash_algorithm("md5")
+
+
+@when("click", "#btn-hash-sha256")
+def handle_btn_hash_sha256(event):
+    select_hash_algorithm("sha256")
+
+
+@when("click", "#btn-hash-sha1")
+def handle_btn_hash_sha1(event):
+    select_hash_algorithm("sha1")
+
+
+# --- Sự kiện nút chọn thuật toán băm (MD5 / SHA) ở Panel Khóa ---
+@when("click", "#btn-algo-md5")
+def handle_btn_algo_md5(event):
+    select_hash_algorithm("md5")
+
+
+@when("click", "#btn-algo-sha256")
+def handle_btn_algo_sha256(event):
+    select_hash_algorithm("sha256")
+
+
+@when("click", "#btn-algo-sha1")
+def handle_btn_algo_sha1(event):
+    select_hash_algorithm("sha1")
+
+
+# --- Sự kiện thay đổi cơ chế thực thi hàm băm ---
+@when("change", "#engine-custom")
+@when("change", "#engine-hashlib")
+@when("change", "#engine-compare")
+def handle_hash_engine_change(event):
+    eng = get_hash_engine()
+    eng_labels = {
+        "custom": "Tự cài đặt thuật toán (Pure Python)",
+        "hashlib": "Thư viện chuẩn (hashlib)",
+        "compare": "So sánh đối chiếu (Tự cài đặt vs hashlib)",
+    }
+    show_message(f"Đã chọn: {eng_labels.get(eng, eng)}. Bấm 'Tạo mã băm' để thực thi.")
+
+
+# --- Sự kiện đóng bảng phân tích Trace ---
+@when("click", "#btn-close-trace")
+def handle_close_trace(event):
+    dom("hash-trace-card").style.display = "none"
 
 
 # --- Khởi tạo trạng thái giao diện khi PyScript sẵn sàng ---
